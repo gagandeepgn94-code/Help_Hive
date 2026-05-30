@@ -1,0 +1,429 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Volunteer Portal</title>
+
+<link rel="stylesheet"
+href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap"
+rel="stylesheet">
+
+<style>
+
+*{
+margin:0;
+padding:0;
+box-sizing:border-box;
+}
+
+body{
+font-family:'Outfit',sans-serif;
+min-height:100vh;
+
+display:flex;
+justify-content:center;
+align-items:center;
+
+background:
+linear-gradient(135deg,#020617,#111827,#0f172a);
+
+overflow:hidden;
+
+color:white;
+}
+
+.orb{
+position:absolute;
+border-radius:50%;
+filter:blur(120px);
+opacity:0.4;
+}
+
+.orb1{
+width:350px;
+height:350px;
+background:#9333ea;
+top:-100px;
+left:-100px;
+}
+
+.orb2{
+width:300px;
+height:300px;
+background:#14b8a6;
+bottom:-100px;
+right:-100px;
+}
+
+.container{
+width:90%;
+max-width:1100px;
+
+display:grid;
+grid-template-columns:1fr 1fr;
+
+background:rgba(255,255,255,0.06);
+
+border:1px solid rgba(255,255,255,0.1);
+
+backdrop-filter:blur(24px);
+
+border-radius:30px;
+
+overflow:hidden;
+
+z-index:10;
+}
+
+.left{
+padding:60px;
+
+display:flex;
+flex-direction:column;
+justify-content:center;
+}
+
+.left h1{
+font-size:58px;
+line-height:1;
+margin-bottom:20px;
+}
+
+.left h1 span{
+background:linear-gradient(135deg,#14b8a6,#9333ea);
+
+background-clip:text;
+-webkit-background-clip:text;
+-webkit-text-fill-color:transparent;
+}
+
+.left p{
+color:#cbd5e1;
+line-height:1.8;
+margin-bottom:30px;
+}
+
+.features{
+display:flex;
+flex-direction:column;
+gap:18px;
+}
+
+.feature{
+display:flex;
+align-items:center;
+gap:14px;
+
+color:#e2e8f0;
+}
+
+.feature i{
+color:#14b8a6;
+font-size:18px;
+}
+
+.right{
+padding:50px;
+background:rgba(255,255,255,0.04);
+}
+
+.form-box h2{
+margin-bottom:25px;
+font-size:34px;
+}
+
+.input-box{
+margin-bottom:18px;
+}
+
+.input-box input,
+.input-box select{
+
+width:100%;
+
+padding:16px;
+
+border:none;
+
+outline:none;
+
+border-radius:16px;
+
+background:rgba(255,255,255,0.08);
+
+color:white;
+}
+
+select option{
+background:#111827;
+}
+
+.remember{
+display:flex;
+align-items:center;
+gap:10px;
+
+margin-bottom:20px;
+
+color:#cbd5e1;
+}
+
+.btn{
+width:100%;
+
+padding:16px;
+
+border:none;
+
+border-radius:18px;
+
+background:
+linear-gradient(135deg,#9333ea,#14b8a6);
+
+color:white;
+
+font-size:16px;
+
+font-weight:600;
+
+cursor:pointer;
+
+transition:0.4s;
+}
+
+.btn:hover{
+transform:translateY(-4px);
+}
+
+.switch{
+margin-top:20px;
+text-align:center;
+color:#cbd5e1;
+}
+
+.switch span{
+color:#14b8a6;
+cursor:pointer;
+font-weight:600;
+}
+
+.hidden{
+display:none;
+}
+
+@media(max-width:900px){
+
+.container{
+grid-template-columns:1fr;
+}
+
+.left{
+display:none;
+}
+
+}
+
+</style>
+
+</head>
+
+<body>
+
+<div class="orb orb1"></div>
+<div class="orb orb2"></div>
+
+<div class="container">
+
+<div class="left">
+
+<h1>
+Become a <span>Volunteer</span>
+</h1>
+
+<p>
+Join the emergency response network and help people during critical situations.
+</p>
+
+<div class="features">
+
+<div class="feature">
+<i class="fa-solid fa-location-dot"></i>
+Nearby Emergency Alerts
+</div>
+
+<div class="feature">
+<i class="fa-solid fa-user-doctor"></i>
+Medical & Rescue Support
+</div>
+
+<div class="feature">
+<i class="fa-solid fa-bell"></i>
+Real-time Notifications
+</div>
+
+</div>
+
+</div>
+
+<div class="right">
+
+<div id="loginBox" class="form-box">
+
+<h2>Volunteer Login</h2>
+
+<form action="/login_volunteer" method="POST">
+
+<div class="input-box">
+<input type="text"
+name="name"
+placeholder="Enter Name"
+required>
+</div>
+
+<label class="remember">
+<input type="checkbox" name="remember">
+Remember Me
+</label>
+
+<button class="btn" type="submit">
+Login
+</button>
+
+</form>
+
+<div class="switch">
+New Volunteer?
+<span onclick="showRegister()">
+Register
+</span>
+</div>
+
+</div>
+
+<div id="registerBox"
+class="form-box hidden">
+
+<h2>Volunteer Register</h2>
+
+<form action="/register_volunteer" method="POST">
+
+<div class="input-box">
+<input type="text"
+name="name"
+placeholder="Full Name"
+required>
+</div>
+
+<div class="input-box">
+<input type="text"
+name="occupation"
+placeholder="Occupation"
+required>
+</div>
+
+<div class="input-box">
+<input type="tel"
+name="phone"
+placeholder="Phone Number"
+required>
+</div>
+
+<div class="input-box">
+
+<select name="category">
+
+<option>Select Category</option>
+
+<option>Doctor</option>
+<option>Nurse</option>
+<option>Blood Donor</option>
+<option>Fire Rescue</option>
+<option>Ambulance Driver</option>
+<option>Disaster Response</option>
+<option>NGO Support</option>
+
+</select>
+
+</div>
+
+<div class="input-box">
+
+<select name="availability">
+
+<option>Available</option>
+<option>Busy</option>
+
+</select>
+
+</div>
+
+<input type="hidden" name="latitude" id="latitude">
+<input type="hidden" name="longitude" id="longitude">
+
+<button class="btn" type="submit">
+Register
+</button>
+
+</form>
+
+<div class="switch">
+Already Registered?
+<span onclick="showLogin()">
+Login
+</span>
+</div>
+
+</div>
+
+</div>
+
+</div>
+
+<script>
+
+function showRegister(){
+
+document.getElementById("loginBox")
+.classList.add("hidden");
+
+document.getElementById("registerBox")
+.classList.remove("hidden");
+}
+
+function showLogin(){
+
+document.getElementById("registerBox")
+.classList.add("hidden");
+
+document.getElementById("loginBox")
+.classList.remove("hidden");
+}
+
+navigator.geolocation.getCurrentPosition(
+
+(position)=>{
+
+document.getElementById("latitude").value =
+position.coords.latitude;
+
+document.getElementById("longitude").value =
+position.coords.longitude;
+
+},
+
+(error)=>{
+console.log(error);
+}
+
+);
+
+</script>
+
+</body>
+</html>

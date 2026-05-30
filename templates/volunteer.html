@@ -1,0 +1,572 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+<meta charset="UTF-8">
+<meta name="viewport"
+content="width=device-width, initial-scale=1.0">
+
+<title>Volunteer Dashboard</title>
+
+<link rel="stylesheet"
+href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap"
+rel="stylesheet">
+
+<style>
+
+*{
+margin:0;
+padding:0;
+box-sizing:border-box;
+}
+
+body{
+font-family:'Outfit',sans-serif;
+
+background:
+linear-gradient(135deg,#020617,#111827,#0f172a);
+
+color:white;
+
+display:flex;
+
+min-height:100vh;
+}
+
+/* SIDEBAR */
+
+.sidebar{
+
+width:260px;
+
+background:
+rgba(255,255,255,0.05);
+
+backdrop-filter:blur(20px);
+
+border-right:
+1px solid rgba(255,255,255,0.1);
+
+padding:30px 20px;
+}
+
+.logo{
+
+font-size:42px;
+font-weight:700;
+
+margin-bottom:50px;
+}
+
+.logo span{
+color:#14b8a6;
+}
+
+.menu{
+display:flex;
+flex-direction:column;
+gap:18px;
+}
+
+.menu a{
+
+text-decoration:none;
+color:#e2e8f0;
+
+padding:16px;
+border-radius:14px;
+
+transition:0.3s;
+
+font-size:17px;
+}
+
+.menu a:hover{
+
+background:
+rgba(255,255,255,0.08);
+
+transform:translateX(5px);
+}
+
+/* MAIN */
+
+.main{
+
+flex:1;
+
+padding:40px;
+}
+
+.topbar{
+
+display:flex;
+justify-content:space-between;
+align-items:center;
+
+margin-bottom:40px;
+}
+
+.topbar h1{
+
+font-size:64px;
+font-weight:700;
+}
+
+.notification{
+
+position:relative;
+font-size:28px;
+}
+
+.badge{
+
+position:absolute;
+
+top:-8px;
+right:-10px;
+
+background:red;
+
+width:24px;
+height:24px;
+
+display:flex;
+justify-content:center;
+align-items:center;
+
+border-radius:50%;
+
+font-size:12px;
+}
+
+/* STATS */
+
+.stats{
+
+display:grid;
+
+grid-template-columns:
+repeat(auto-fit,minmax(220px,1fr));
+
+gap:25px;
+
+margin-bottom:40px;
+}
+
+.card{
+
+background:
+rgba(255,255,255,0.06);
+
+border:
+1px solid rgba(255,255,255,0.08);
+
+backdrop-filter:blur(18px);
+
+padding:35px;
+
+border-radius:28px;
+
+transition:0.4s;
+}
+
+.card:hover{
+
+transform:translateY(-6px);
+}
+
+.card h2{
+
+font-size:58px;
+
+margin-bottom:12px;
+}
+
+/* SEARCH */
+
+.search-box{
+
+margin-bottom:30px;
+}
+
+.search-box form{
+
+display:flex;
+gap:14px;
+}
+
+.search-box input{
+
+flex:1;
+
+padding:16px;
+
+border:none;
+outline:none;
+
+border-radius:18px;
+
+background:
+rgba(255,255,255,0.08);
+
+color:white;
+}
+
+.search-box button{
+
+padding:16px 28px;
+
+border:none;
+
+border-radius:18px;
+
+background:
+linear-gradient(135deg,#9333ea,#14b8a6);
+
+color:white;
+
+cursor:pointer;
+}
+
+/* REQUESTS */
+
+.requests{
+
+display:grid;
+
+grid-template-columns:
+repeat(auto-fit,minmax(320px,1fr));
+
+gap:25px;
+}
+
+.request-card{
+
+background:
+rgba(255,255,255,0.06);
+
+border:
+1px solid rgba(255,255,255,0.08);
+
+padding:25px;
+
+border-radius:24px;
+
+transition:0.4s;
+}
+
+.request-card:hover{
+transform:translateY(-6px);
+}
+
+.request-card h3{
+
+font-size:24px;
+margin-bottom:14px;
+}
+
+.request-card p{
+
+margin-bottom:10px;
+color:#cbd5e1;
+}
+
+.status{
+
+display:inline-block;
+
+padding:8px 14px;
+
+border-radius:30px;
+
+font-size:13px;
+font-weight:600;
+
+margin-top:10px;
+margin-bottom:16px;
+}
+
+.Pending{
+background:orange;
+color:black;
+}
+
+.Accepted{
+background:#3b82f6;
+}
+
+.Completed{
+background:#22c55e;
+}
+
+.actions{
+
+display:flex;
+gap:12px;
+flex-wrap:wrap;
+}
+
+.actions a{
+
+text-decoration:none;
+
+padding:12px 18px;
+
+border-radius:14px;
+
+font-size:14px;
+
+color:white;
+
+transition:0.3s;
+}
+
+.accept{
+background:#3b82f6;
+}
+
+.complete{
+background:#22c55e;
+}
+
+.delete{
+background:#ef4444;
+}
+
+.actions a:hover{
+transform:scale(1.05);
+}
+
+/* MOBILE */
+
+@media(max-width:900px){
+
+.sidebar{
+display:none;
+}
+
+.topbar h1{
+font-size:40px;
+}
+
+}
+
+</style>
+
+</head>
+
+<body>
+
+<!-- SIDEBAR -->
+
+<div class="sidebar">
+
+<div class="logo">
+Help<span>Hive</span>
+</div>
+
+<div class="menu">
+
+<a href="/volunteer">
+<i class="fa-solid fa-house"></i>
+ Dashboard
+</a>
+
+<a href="#">
+<i class="fa-solid fa-bell"></i>
+ Alerts
+</a>
+
+<a href="#">
+<i class="fa-solid fa-users"></i>
+ Volunteers
+</a>
+
+<a href="/logout">
+<i class="fa-solid fa-right-from-bracket"></i>
+ Logout
+</a>
+
+</div>
+
+</div>
+
+<!-- MAIN -->
+
+<div class="main">
+
+<div class="topbar">
+
+<h1>Emergency Dashboard</h1>
+
+<div class="notification">
+
+<i class="fa-solid fa-bell"></i>
+
+<div class="badge">
+{{ requests|length }}
+</div>
+
+</div>
+
+</div>
+
+<!-- STATS -->
+
+<div class="stats">
+
+<div class="card">
+
+<h2>
+{{ requests|length }}
+</h2>
+
+<p>Active Emergencies</p>
+
+</div>
+
+<div class="card">
+
+<h2>
+
+{{ requests
+| selectattr('status','equalto','Accepted')
+| list
+| length }}
+
+</h2>
+
+<p>Accepted Requests</p>
+
+</div>
+
+<div class="card">
+
+<h2>
+
+{{ requests
+| selectattr('status','equalto','Pending')
+| list
+| length }}
+
+</h2>
+
+<p>Nearby Alerts</p>
+
+</div>
+
+<div class="card">
+
+<h2>
+{{ session['volunteer'] }}
+</h2>
+
+<p>Volunteer Online</p>
+
+</div>
+
+</div>
+
+<!-- SEARCH -->
+
+<div class="search-box">
+
+<form method="GET" action="/volunteer">
+
+<input
+type="text"
+name="search"
+placeholder="Search category like Doctor, Nurse..."
+>
+
+<button type="submit">
+
+<i class="fa-solid fa-magnifying-glass"></i>
+
+</button>
+
+</form>
+
+</div>
+
+<!-- REQUESTS -->
+
+<div class="requests">
+
+{% for req in requests %}
+
+<div class="request-card">
+
+<h3>
+{{ req.category }}
+</h3>
+
+<p>
+<i class="fa-solid fa-user"></i>
+ {{ req.name }}
+</p>
+<p>
+<i class="fa-solid fa-location-dot"></i>
+{{ req.address }}
+</p>
+<p>
+<i class="fa-solid fa-circle-info"></i>
+ {{ req.help }}
+</p>
+
+<p>
+<i class="fa-solid fa-bolt"></i>
+ Priority: {{ req.priority }}
+</p>
+
+<p>
+<i class="fa-solid fa-clock"></i>
+ {{ req.time }}
+</p>
+
+<div class="status {{ req.status }}">
+{{ req.status }}
+</div>
+
+<div class="actions">
+
+<a
+href="/accept/{{ loop.index0 }}"
+class="accept">
+
+Accept
+
+</a>
+
+<a
+href="/complete/{{ loop.index0 }}"
+class="complete">
+
+Complete
+
+</a>
+
+<a
+href="/delete/{{ loop.index0 }}"
+class="delete">
+
+Delete
+
+</a>
+
+</div>
+
+</div>
+
+{% endfor %}
+
+</div>
+
+</div>
+
+</body>
+</html>

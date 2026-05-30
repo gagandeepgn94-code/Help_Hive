@@ -1,0 +1,698 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <title>HelpHive | Community Help System</title>
+
+  <!-- GOOGLE FONT -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&display=swap"
+    rel="stylesheet">
+
+  <!-- FONT AWESOME -->
+  <link rel="stylesheet"
+    href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+
+  <style>
+
+    *{
+      margin:0;
+      padding:0;
+      box-sizing:border-box;
+    }
+
+    body{
+      font-family:'Outfit',sans-serif;
+      overflow-x:hidden;
+      color:white;
+      background:#020617;
+    }
+
+    /* =========================
+       CINEMATIC BACKGROUND
+    ========================== */
+
+    .animated-bg{
+      position:fixed;
+      inset:0;
+      z-index:-10;
+      overflow:hidden;
+
+      background:
+      radial-gradient(circle at 20% 20%,
+      rgba(147,51,234,0.35),
+      transparent 25%),
+
+      radial-gradient(circle at 80% 30%,
+      rgba(20,184,166,0.25),
+      transparent 25%),
+
+      radial-gradient(circle at 50% 80%,
+      rgba(249,115,22,0.18),
+      transparent 30%),
+
+      linear-gradient(
+      135deg,
+      #020617 0%,
+      #050816 25%,
+      #0f172a 55%,
+      #111827 100%);
+    }
+
+    .animated-bg::before{
+      content:"";
+      position:absolute;
+      width:200%;
+      height:200%;
+      top:-50%;
+      left:-50%;
+
+      background:
+      conic-gradient(
+      from 180deg,
+      transparent,
+      rgba(147,51,234,0.12),
+      transparent,
+      rgba(20,184,166,0.10),
+      transparent);
+
+      animation:rotateBg 28s linear infinite;
+    }
+
+    .animated-bg::after{
+      content:"";
+      position:absolute;
+      inset:0;
+
+      background:
+      radial-gradient(circle at center,
+      transparent 20%,
+      rgba(0,0,0,0.45) 100%);
+    }
+
+    @keyframes rotateBg{
+
+      0%{
+        transform:rotate(0deg);
+      }
+
+      100%{
+        transform:rotate(360deg);
+      }
+
+    }
+
+    /* =========================
+       PARTICLES
+    ========================== */
+
+    .particles{
+      position:fixed;
+      inset:0;
+      z-index:-4;
+
+      background-image:
+      radial-gradient(white 1px, transparent 1px);
+
+      background-size:40px 40px;
+
+      opacity:0.08;
+
+      animation:moveParticles 30s linear infinite;
+    }
+
+    @keyframes moveParticles{
+
+      from{
+        transform:translateY(0px);
+      }
+
+      to{
+        transform:translateY(-200px);
+      }
+
+    }
+
+    /* =========================
+       GLOW ORBS
+    ========================== */
+
+    .orb{
+      position:fixed;
+      border-radius:50%;
+      filter:blur(120px);
+      opacity:0.5;
+      z-index:-2;
+      animation:float 10s ease-in-out infinite;
+    }
+
+    .orb1{
+      width:350px;
+      height:350px;
+      background:#9333ea;
+      top:-100px;
+      left:-100px;
+    }
+
+    .orb2{
+      width:300px;
+      height:300px;
+      background:#14b8a6;
+      right:-80px;
+      bottom:-80px;
+    }
+
+    .orb3{
+      width:260px;
+      height:260px;
+      background:#f97316;
+      top:40%;
+      left:40%;
+    }
+
+    @keyframes float {
+
+      0%{
+        transform:translateY(0px);
+      }
+
+      50%{
+        transform:translateY(-50px);
+      }
+
+      100%{
+        transform:translateY(0px);
+      }
+
+    }
+
+    /* =========================
+       NAVBAR
+    ========================== */
+
+    .navbar{
+      width:100%;
+      position:fixed;
+      top:0;
+      z-index:100;
+
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+
+      padding:22px 7%;
+
+      backdrop-filter:blur(20px);
+
+      background:rgba(255,255,255,0.04);
+
+      border-bottom:1px solid rgba(255,255,255,0.08);
+    }
+
+    .logo{
+      font-size:30px;
+      font-weight:800;
+    }
+
+    .logo span{
+      background:linear-gradient(135deg,#14b8a6,#9333ea);
+
+      background-clip:text;
+      -webkit-background-clip:text;
+      -webkit-text-fill-color:transparent;
+    }
+
+    .nav-links{
+      display:flex;
+      gap:30px;
+    }
+
+    .nav-links a{
+      text-decoration:none;
+      color:#d1d5db;
+      font-weight:500;
+      transition:0.3s;
+    }
+
+    .nav-links a:hover{
+      color:white;
+    }
+
+    .nav-btn{
+      padding:14px 24px;
+      border-radius:40px;
+      text-decoration:none;
+
+      background:linear-gradient(135deg,#9333ea,#14b8a6);
+
+      color:white;
+      font-weight:600;
+
+      transition:0.3s;
+
+      box-shadow:0 10px 25px rgba(147,51,234,0.3);
+    }
+
+    .nav-btn:hover{
+      transform:translateY(-4px);
+    }
+
+    /* =========================
+       HERO SECTION
+    ========================== */
+
+    .hero{
+      min-height:100vh;
+
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+
+      padding:140px 7%;
+      gap:60px;
+    }
+
+    .hero-left{
+      width:50%;
+      animation:fadeUp 1.2s ease;
+    }
+
+    .badge{
+      display:inline-flex;
+      align-items:center;
+      gap:10px;
+
+      padding:12px 20px;
+      border-radius:50px;
+
+      margin-bottom:30px;
+
+      background:rgba(255,255,255,0.08);
+
+      border:1px solid rgba(255,255,255,0.1);
+
+      backdrop-filter:blur(18px);
+    }
+
+    .badge i{
+      color:#f97316;
+    }
+
+    .hero-left h1{
+      font-size:96px;
+      line-height:0.95;
+      margin-bottom:30px;
+      font-weight:800;
+    }
+
+    .hero-left h1 span{
+      background:linear-gradient(135deg,#14b8a6,#9333ea);
+
+      background-clip:text;
+      -webkit-background-clip:text;
+      -webkit-text-fill-color:transparent;
+    }
+
+    .hero-left p{
+      font-size:18px;
+      color:#d1d5db;
+      line-height:1.8;
+
+      margin-bottom:40px;
+
+      max-width:650px;
+    }
+
+    .hero-buttons{
+      display:flex;
+      gap:20px;
+      flex-wrap:wrap;
+    }
+
+    .primary-btn,
+    .secondary-btn{
+
+      padding:18px 30px;
+
+      border-radius:18px;
+
+      text-decoration:none;
+
+      font-weight:600;
+
+      transition:0.4s;
+    }
+
+    .primary-btn{
+      background:linear-gradient(135deg,#9333ea,#14b8a6);
+
+      color:white;
+
+      box-shadow:0 15px 35px rgba(147,51,234,0.35);
+    }
+
+    .secondary-btn{
+      background:rgba(255,255,255,0.08);
+
+      border:1px solid rgba(255,255,255,0.1);
+
+      color:white;
+
+      backdrop-filter:blur(16px);
+    }
+
+    .primary-btn:hover,
+    .secondary-btn:hover{
+      transform:translateY(-6px);
+    }
+
+    /* =========================
+       HERO RIGHT
+    ========================== */
+
+    .hero-right{
+      width:45%;
+
+      display:grid;
+
+      grid-template-columns:1fr 1fr;
+
+      gap:24px;
+    }
+
+    .card{
+
+      padding:32px;
+
+      border-radius:28px;
+
+      background:rgba(255,255,255,0.08);
+
+      border:1px solid rgba(255,255,255,0.08);
+
+      backdrop-filter:blur(24px);
+
+      transition:0.5s;
+
+      box-shadow:
+      0 10px 30px rgba(0,0,0,0.25);
+    }
+
+    .card:hover{
+
+      transform:
+      translateY(-12px)
+      scale(1.04)
+      rotateX(4deg);
+
+      box-shadow:
+      0 20px 50px rgba(147,51,234,0.4),
+      0 0 40px rgba(20,184,166,0.3);
+    }
+
+    .card i{
+      font-size:44px;
+      margin-bottom:20px;
+    }
+
+    .doctor i{
+      color:#14b8a6;
+    }
+
+    .fire i{
+      color:#f97316;
+    }
+
+    .blood i{
+      color:#ef4444;
+    }
+
+    .ngo i{
+      color:#9333ea;
+    }
+
+    .card h3{
+      font-size:24px;
+      margin-bottom:12px;
+    }
+
+    .card p{
+      color:#d1d5db;
+      line-height:1.7;
+    }
+
+    /* =========================
+       STATS
+    ========================== */
+
+    .stats{
+      padding:0 7% 100px;
+
+      display:flex;
+      justify-content:center;
+      gap:30px;
+      flex-wrap:wrap;
+    }
+
+    .stat-box{
+
+      padding:40px 60px;
+
+      border-radius:28px;
+
+      background:rgba(255,255,255,0.08);
+
+      border:1px solid rgba(255,255,255,0.08);
+
+      backdrop-filter:blur(24px);
+
+      text-align:center;
+    }
+
+    .stat-box h2{
+      font-size:52px;
+      margin-bottom:12px;
+
+      background:linear-gradient(135deg,#14b8a6,#9333ea);
+
+      background-clip:text;
+      -webkit-background-clip:text;
+      -webkit-text-fill-color:transparent;
+    }
+
+    .stat-box p{
+      color:#d1d5db;
+      font-size:16px;
+    }
+
+    /* =========================
+       ANIMATION
+    ========================== */
+
+    @keyframes fadeUp {
+
+      from{
+        opacity:0;
+        transform:translateY(40px);
+      }
+
+      to{
+        opacity:1;
+        transform:translateY(0px);
+      }
+
+    }
+
+    /* =========================
+       RESPONSIVE
+    ========================== */
+
+    @media(max-width:1000px){
+
+      .hero{
+        flex-direction:column;
+        text-align:center;
+      }
+
+      .hero-left,
+      .hero-right{
+        width:100%;
+      }
+
+      .hero-left h1{
+        font-size:62px;
+      }
+
+      .hero-buttons{
+        justify-content:center;
+      }
+
+      .hero-right{
+        grid-template-columns:1fr;
+      }
+
+      .nav-links{
+        display:none;
+      }
+
+    }
+
+  </style>
+
+</head>
+
+<body>
+
+  <!-- BACKGROUND -->
+
+  <div class="animated-bg"></div>
+
+  <div class="particles"></div>
+
+  <div class="orb orb1"></div>
+  <div class="orb orb2"></div>
+  <div class="orb orb3"></div>
+
+  <!-- NAVBAR -->
+
+  <nav class="navbar">
+
+    <div class="logo">
+      Help<span>Hive</span>
+    </div>
+
+    <div class="nav-links">
+      <a href="#">Home</a>
+      <a href="#">Services</a>
+      <a href="#">Volunteers</a>
+      <a href="#">Emergency</a>
+      <a href="#">Contact</a>
+    </div>
+
+    <a href="#" class="nav-btn">
+      Request Help
+    </a>
+
+  </nav>
+
+  <!-- HERO -->
+
+  <section class="hero">
+
+    <div class="hero-left">
+
+      <div class="badge">
+        <i class="fa-solid fa-bolt"></i>
+        24/7 Emergency Community Support
+      </div>
+
+      <h1>
+        Together We Can
+        <span>Save Lives</span>
+      </h1>
+
+      <p>
+        A premium emergency support platform connecting people with doctors,
+        blood donors, rescue teams, ambulance drivers, NGO volunteers,
+        and disaster response communities in real time.
+      </p>
+
+      <div class="hero-buttons">
+
+        <a href="/request-help" class="primary-btn">
+          <i class="fa-solid fa-user"></i>
+         Request Help
+        </a>
+
+        <a href="/volunteer_login" class="secondary-btn">
+          <i class="fa-solid fa-user-shield"></i>
+          Volunteer Portal
+        </a>
+
+      </div>
+
+    </div>
+
+    <!-- RIGHT -->
+
+    <div class="hero-right">
+
+      <div class="card doctor">
+
+        <i class="fa-solid fa-user-doctor"></i>
+
+        <h3>Medical Help</h3>
+
+        <p>
+          Doctors, nurses and healthcare volunteers available instantly.
+        </p>
+
+      </div>
+
+      <div class="card fire">
+
+        <i class="fa-solid fa-fire-extinguisher"></i>
+
+        <h3>Fire Rescue</h3>
+
+        <p>
+          Fire rescue and disaster response volunteers for emergencies.
+        </p>
+
+      </div>
+
+      <div class="card blood">
+
+        <i class="fa-solid fa-droplet"></i>
+
+        <h3>Blood Donor</h3>
+
+        <p>
+          Find nearby blood donors instantly during emergency situations.
+        </p>
+
+      </div>
+
+      <div class="card ngo">
+
+        <i class="fa-solid fa-hand-holding-heart"></i>
+
+        <h3>NGO Support</h3>
+
+        <p>
+          NGOs and volunteers providing community support 24/7.
+        </p>
+
+      </div>
+
+    </div>
+
+  </section>
+
+  <!-- STATS -->
+
+  <section class="stats">
+
+    <div class="stat-box">
+      <h2>2K+</h2>
+      <p>Verified Volunteers</p>
+    </div>
+
+    <div class="stat-box">
+      <h2>10K+</h2>
+      <p>Requests Solved</p>
+    </div>
+
+    <div class="stat-box">
+      <h2>24/7</h2>
+      <p>Emergency Support</p>
+    </div>
+
+  </section>
+
+</body>
+
+</html>

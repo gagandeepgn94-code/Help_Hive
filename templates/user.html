@@ -1,0 +1,128 @@
+<!-- user.html -->
+
+<!DOCTYPE html>
+<html>
+<head>
+    <title>User Dashboard</title>
+
+    <link rel="stylesheet"
+    href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+
+    <style>
+
+        body{
+            margin:0;
+            font-family:Arial;
+            background:#f4f6f8;
+        }
+
+        .navbar{
+            display:flex;
+            justify-content:space-between;
+            align-items:center;
+            background:#007BFF;
+            color:white;
+            padding:12px 20px;
+        }
+
+        .logo{
+            font-size:20px;
+            font-weight:bold;
+        }
+
+        .logout{
+            background:white;
+            color:#007BFF;
+            padding:6px 12px;
+            border-radius:5px;
+            text-decoration:none;
+        }
+
+        .container{
+            display:flex;
+            justify-content:center;
+            padding:40px;
+        }
+
+        .card{
+            background:white;
+            padding:25px;
+            width:350px;
+            border-radius:10px;
+            box-shadow:0px 0px 10px rgba(0,0,0,0.1);
+        }
+
+        input, select, button{
+            width:100%;
+            padding:10px;
+            margin:10px 0;
+            border-radius:5px;
+            border:1px solid #ccc;
+        }
+
+        button{
+            background:#007BFF;
+            color:white;
+            border:none;
+        }
+
+    </style>
+
+</head>
+
+<body>
+
+<div class="navbar">
+
+    <div class="logo">
+        <i class="fas fa-hands-helping"></i>
+        Community Help
+    </div>
+
+    <a href="/logout" class="logout">
+        Logout
+    </a>
+
+</div>
+
+<div class="container">
+
+    <div class="card">
+
+        <h2>Request Help</h2>
+
+        <form action="/request_help" method="POST">
+
+            <input type="text"
+            name="name"
+            placeholder="Your Name"
+            required>
+
+            <input type="text"
+            name="location"
+            placeholder="Location"
+            required>
+
+            <input type="text"
+            name="help"
+            placeholder="Type of Help"
+            required>
+
+            <select name="priority">
+                <option>High</option>
+                <option>Medium</option>
+                <option>Low</option>
+            </select>
+
+            <button type="submit">
+                Submit Request
+            </button>
+
+        </form>
+
+    </div>
+
+</div>
+
+</body>
+</html>

@@ -1,0 +1,37 @@
+*{
+  margin:0;
+  padding:0;
+  box-sizing:border-box;
+}
+
+body{
+  font-family:Arial, Helvetica, sans-serif;
+  min-height:100vh;
+  background:linear-gradient(135deg,#0f172a,#1e1b4b,#042f2e);
+  color:white;
+  overflow-x:hidden;
+}
+
+.bg-blur{
+  position:absolute;
+  width:500px;
+  height:500px;
+  background:#7c3aed;
+  filter:blur(180px);
+  opacity:0.4;
+  top:-100px;
+  left:-100px;
+  z-index:-1;
+}
+
+.navbar{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  padding:25px 8%;
+}
+
+.logo{
+  font-size:28px;
+  font-weight:bold;
+}
