@@ -539,6 +539,74 @@
       }
 
     }
+    .how-it-works,
+.impact{
+
+padding:100px 7%;
+text-align:center;
+}
+
+.how-it-works h2,
+.impact h2{
+
+font-size:48px;
+margin-bottom:60px;
+}
+
+.steps,
+.impact-grid{
+
+display:grid;
+grid-template-columns:
+repeat(auto-fit,minmax(280px,1fr));
+
+gap:30px;
+}
+
+.step,
+.impact-card{
+
+padding:35px;
+
+border-radius:30px;
+
+background:
+rgba(255,255,255,0.08);
+
+border:
+1px solid rgba(255,255,255,0.08);
+
+backdrop-filter:blur(20px);
+
+transition:.4s;
+}
+
+.step:hover,
+.impact-card:hover{
+
+transform:translateY(-10px);
+}
+
+.step i{
+
+font-size:48px;
+margin-bottom:20px;
+
+color:#14b8a6;
+}
+
+.footer{
+
+padding:60px 7%;
+
+text-align:center;
+
+background:
+rgba(255,255,255,0.04);
+
+border-top:
+1px solid rgba(255,255,255,0.08);
+}
 
   </style>
 
@@ -571,6 +639,7 @@
       <a href="#">Emergency</a>
       <a href="#">Contact</a>
     </div>
+
 
   </nav>
 
@@ -688,7 +757,73 @@
     </div>
 
   </section>
+<section class="how-it-works">
 
+<h2>How HelpHive Works</h2>
+
+<div class="steps">
+
+<div class="step">
+<i class="fa-solid fa-triangle-exclamation"></i>
+<h3>Request Help</h3>
+<p>Submit your emergency request with location and category.</p>
+</div>
+
+<div class="step">
+<i class="fa-solid fa-bell"></i>
+<h3>Volunteers Notified</h3>
+<p>Nearby volunteers instantly receive emergency alerts.</p>
+</div>
+
+<div class="step">
+<i class="fa-solid fa-handshake"></i>
+<h3>Help Delivered</h3>
+<p>Volunteers respond and resolve the emergency quickly.</p>
+</div>
+
+</div>
+
+</section>
+<section class="impact">
+
+<h2>Real World Impact</h2>
+
+<div class="impact-grid">
+
+<div class="impact-card">
+🚑
+<h3>Medical Emergencies</h3>
+<p>Connect patients with nearby healthcare volunteers.</p>
+</div>
+
+<div class="impact-card">
+🩸
+<h3>Blood Donation</h3>
+<p>Find blood donors instantly during critical situations.</p>
+</div>
+
+<div class="impact-card">
+🔥
+<h3>Disaster Relief</h3>
+<p>Coordinate community support during emergencies.</p>
+</div>
+
+</div>
+
+</section>
+<footer class="footer">
+
+<h2>HelpHive</h2>
+
+<p>
+Connecting Communities. Saving Lives.
+</p>
+
+<p>
+GM University | Flask + AWS DynamoDB Project
+</p>
+
+</footer>
 </body>
 
 </html>
