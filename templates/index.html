@@ -2,611 +2,812 @@
 <html lang="en">
 
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="HelpHive — A premium emergency support platform connecting people with doctors, blood donors, rescue teams, and volunteers in real time.">
 
-  <title>HelpHive | Community Help System</title>
+  <title>HelpHive | Community Emergency Support</title>
 
-  <!-- GOOGLE FONT -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&display=swap"
     rel="stylesheet">
-
-  <!-- FONT AWESOME -->
   <link rel="stylesheet"
     href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 
   <style>
 
-    *{
-      margin:0;
-      padding:0;
-      box-sizing:border-box;
+    /* ===== Variables ===== */
+    :root {
+      --bg-primary: #020617;
+      --bg-secondary: #0f172a;
+      --bg-tertiary: #111827;
+      --glass: rgba(255, 255, 255, 0.05);
+      --glass-border: rgba(255, 255, 255, 0.08);
+      --glass-hover: rgba(255, 255, 255, 0.1);
+      --accent-purple: #9333ea;
+      --accent-teal: #14b8a6;
+      --accent-orange: #f97316;
+      --accent-blue: #3b82f6;
+      --accent-red: #ef4444;
+      --accent-green: #22c55e;
+      --text-primary: #f1f5f9;
+      --text-secondary: #94a3b8;
+      --text-muted: #64748b;
+      --gradient-main: linear-gradient(135deg, var(--accent-purple), var(--accent-teal));
+      --gradient-warm: linear-gradient(135deg, var(--accent-orange), var(--accent-purple));
     }
 
-    body{
-      font-family:'Outfit',sans-serif;
-      overflow-x:hidden;
-      color:white;
-      background:#020617;
+    /* ===== Reset ===== */
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
     }
 
-    /* =========================
-       CINEMATIC BACKGROUND
-    ========================== */
+    html {
+      scroll-behavior: smooth;
+    }
 
-    .animated-bg{
-      position:fixed;
-      inset:0;
-      z-index:-10;
-      overflow:hidden;
+    body {
+      font-family: 'Outfit', sans-serif;
+      overflow-x: hidden;
+      color: var(--text-primary);
+      background: var(--bg-primary);
+    }
 
+    /* ===== Scrollbar ===== */
+    ::-webkit-scrollbar { width: 6px; }
+    ::-webkit-scrollbar-track { background: transparent; }
+    ::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.1); border-radius: 99px; }
+
+    /* ===== Background ===== */
+    .animated-bg {
+      position: fixed;
+      inset: 0;
+      z-index: -10;
+      overflow: hidden;
       background:
-      radial-gradient(circle at 20% 20%,
-      rgba(147,51,234,0.35),
-      transparent 25%),
-
-      radial-gradient(circle at 80% 30%,
-      rgba(20,184,166,0.25),
-      transparent 25%),
-
-      radial-gradient(circle at 50% 80%,
-      rgba(249,115,22,0.18),
-      transparent 30%),
-
-      linear-gradient(
-      135deg,
-      #020617 0%,
-      #050816 25%,
-      #0f172a 55%,
-      #111827 100%);
+        radial-gradient(circle at 20% 20%, rgba(147,51,234,0.2), transparent 30%),
+        radial-gradient(circle at 80% 30%, rgba(20,184,166,0.15), transparent 30%),
+        radial-gradient(circle at 50% 80%, rgba(249,115,22,0.1), transparent 35%),
+        linear-gradient(135deg, #020617 0%, #050816 25%, #0f172a 55%, #111827 100%);
+    }
+    .animated-bg::before {
+      content: "";
+      position: absolute;
+      width: 200%;
+      height: 200%;
+      top: -50%;
+      left: -50%;
+      background: conic-gradient(from 180deg, transparent, rgba(147,51,234,0.08), transparent, rgba(20,184,166,0.06), transparent);
+      animation: rotateBg 30s linear infinite;
     }
 
-    .animated-bg::before{
-      content:"";
-      position:absolute;
-      width:200%;
-      height:200%;
-      top:-50%;
-      left:-50%;
-
-      background:
-      conic-gradient(
-      from 180deg,
-      transparent,
-      rgba(147,51,234,0.12),
-      transparent,
-      rgba(20,184,166,0.10),
-      transparent);
-
-      animation:rotateBg 28s linear infinite;
+    @keyframes rotateBg {
+      to { transform: rotate(360deg); }
     }
 
-    .animated-bg::after{
-      content:"";
-      position:absolute;
-      inset:0;
-
-      background:
-      radial-gradient(circle at center,
-      transparent 20%,
-      rgba(0,0,0,0.45) 100%);
+    .particles {
+      position: fixed;
+      inset: 0;
+      z-index: -4;
+      background-image: radial-gradient(rgba(255,255,255,0.4) 1px, transparent 1px);
+      background-size: 48px 48px;
+      opacity: 0.05;
+      animation: driftParticles 40s linear infinite;
     }
 
-    @keyframes rotateBg{
-
-      0%{
-        transform:rotate(0deg);
-      }
-
-      100%{
-        transform:rotate(360deg);
-      }
-
+    @keyframes driftParticles {
+      from { transform: translateY(0); }
+      to { transform: translateY(-200px); }
     }
 
-    /* =========================
-       PARTICLES
-    ========================== */
-
-    .particles{
-      position:fixed;
-      inset:0;
-      z-index:-4;
-
-      background-image:
-      radial-gradient(white 1px, transparent 1px);
-
-      background-size:40px 40px;
-
-      opacity:0.08;
-
-      animation:moveParticles 30s linear infinite;
+    /* Orbs */
+    .orb {
+      position: fixed;
+      border-radius: 50%;
+      filter: blur(140px);
+      z-index: -2;
+      pointer-events: none;
+    }
+    .orb1 {
+      width: 450px; height: 450px;
+      background: var(--accent-purple);
+      top: -120px; left: -120px;
+      opacity: 0.3;
+      animation: floatOrb 14s ease-in-out infinite;
+    }
+    .orb2 {
+      width: 400px; height: 400px;
+      background: var(--accent-teal);
+      right: -100px; bottom: -100px;
+      opacity: 0.22;
+      animation: floatOrb 16s ease-in-out infinite reverse;
+    }
+    .orb3 {
+      width: 300px; height: 300px;
+      background: var(--accent-orange);
+      top: 45%; left: 42%;
+      opacity: 0.08;
+      animation: floatOrb 18s ease-in-out infinite 2s;
     }
 
-    @keyframes moveParticles{
-
-      from{
-        transform:translateY(0px);
-      }
-
-      to{
-        transform:translateY(-200px);
-      }
-
+    @keyframes floatOrb {
+      0%, 100% { transform: translateY(0) scale(1); }
+      50% { transform: translateY(-40px) scale(1.06); }
     }
 
-    /* =========================
-       GLOW ORBS
-    ========================== */
-
-    .orb{
-      position:fixed;
-      border-radius:50%;
-      filter:blur(120px);
-      opacity:0.5;
-      z-index:-2;
-      animation:float 10s ease-in-out infinite;
+    /* ===== Navbar ===== */
+    .navbar {
+      width: 100%;
+      position: fixed;
+      top: 0;
+      z-index: 100;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 18px 7%;
+      backdrop-filter: blur(24px);
+      background: rgba(2, 6, 23, 0.6);
+      border-bottom: 1px solid var(--glass-border);
+      transition: all 0.3s ease;
+    }
+    .navbar.scrolled {
+      background: rgba(2, 6, 23, 0.9);
+      padding: 14px 7%;
     }
 
-    .orb1{
-      width:350px;
-      height:350px;
-      background:#9333ea;
-      top:-100px;
-      left:-100px;
+    .logo {
+      font-size: 28px;
+      font-weight: 800;
+      text-decoration: none;
+      color: var(--text-primary);
+    }
+    .logo span {
+      background: linear-gradient(135deg, var(--accent-teal), var(--accent-purple));
+      background-clip: text;
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
     }
 
-    .orb2{
-      width:300px;
-      height:300px;
-      background:#14b8a6;
-      right:-80px;
-      bottom:-80px;
+    .nav-links {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .nav-links a {
+      text-decoration: none;
+      color: var(--text-secondary);
+      font-weight: 500;
+      font-size: 14px;
+      padding: 10px 18px;
+      border-radius: 12px;
+      transition: all 0.3s ease;
+    }
+    .nav-links a:hover {
+      color: var(--text-primary);
+      background: rgba(255,255,255,0.06);
+    }
+    .nav-btn {
+      padding: 12px 24px !important;
+      border-radius: 14px !important;
+      background: var(--gradient-main) !important;
+      color: white !important;
+      font-weight: 600 !important;
+      box-shadow: 0 8px 24px rgba(147,51,234,0.25);
+      transition: all 0.3s ease !important;
+    }
+    .nav-btn:hover {
+      transform: translateY(-3px) !important;
+      box-shadow: 0 14px 32px rgba(147,51,234,0.35) !important;
+      background: var(--gradient-main) !important;
     }
 
-    .orb3{
-      width:260px;
-      height:260px;
-      background:#f97316;
-      top:40%;
-      left:40%;
+    /* Mobile menu */
+    .nav-toggle {
+      display: none;
+      background: none;
+      border: none;
+      color: var(--text-primary);
+      font-size: 22px;
+      cursor: pointer;
+      padding: 8px;
     }
 
-    @keyframes float {
-
-      0%{
-        transform:translateY(0px);
-      }
-
-      50%{
-        transform:translateY(-50px);
-      }
-
-      100%{
-        transform:translateY(0px);
-      }
-
+    /* ===== Hero ===== */
+    .hero {
+      min-height: 100vh;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 140px 7% 100px;
+      gap: 60px;
+      position: relative;
     }
 
-    /* =========================
-       NAVBAR
-    ========================== */
-
-    .navbar{
-      width:100%;
-      position:fixed;
-      top:0;
-      z-index:100;
-
-      display:flex;
-      justify-content:space-between;
-      align-items:center;
-
-      padding:22px 7%;
-
-      backdrop-filter:blur(20px);
-
-      background:rgba(255,255,255,0.04);
-
-      border-bottom:1px solid rgba(255,255,255,0.08);
+    .hero-left {
+      width: 52%;
+    }
+    .hero-left .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      padding: 10px 20px;
+      border-radius: 99px;
+      margin-bottom: 28px;
+      background: var(--glass);
+      border: 1px solid var(--glass-border);
+      backdrop-filter: blur(20px);
+      font-size: 14px;
+      color: var(--text-secondary);
+      animation: fadeUp 0.8s ease;
+    }
+    .badge-dot {
+      width: 8px; height: 8px;
+      border-radius: 50%;
+      background: var(--accent-green);
+      animation: pulseDot 2s infinite;
+    }
+    @keyframes pulseDot {
+      0%, 100% { opacity: 1; transform: scale(1); }
+      50% { opacity: 0.4; transform: scale(0.8); }
     }
 
-    .logo{
-      font-size:30px;
-      font-weight:800;
+    .hero-left h1 {
+      font-size: 82px;
+      line-height: 0.98;
+      margin-bottom: 28px;
+      font-weight: 800;
+      letter-spacing: -2px;
+      animation: fadeUp 0.8s ease 0.1s both;
+    }
+    .hero-left h1 span {
+      background: linear-gradient(135deg, var(--accent-teal), var(--accent-purple));
+      background-clip: text;
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+    .hero-left h1 .line2 {
+      background: linear-gradient(135deg, var(--accent-orange), var(--accent-purple));
+      background-clip: text;
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
     }
 
-    .logo span{
-      background:linear-gradient(135deg,#14b8a6,#9333ea);
-
-      background-clip:text;
-      -webkit-background-clip:text;
-      -webkit-text-fill-color:transparent;
+    .hero-left p {
+      font-size: 17px;
+      color: var(--text-secondary);
+      line-height: 1.8;
+      margin-bottom: 40px;
+      max-width: 540px;
+      animation: fadeUp 0.8s ease 0.2s both;
     }
 
-    .nav-links{
-      display:flex;
-      gap:30px;
+    .hero-buttons {
+      display: flex;
+      gap: 16px;
+      flex-wrap: wrap;
+      animation: fadeUp 0.8s ease 0.3s both;
+    }
+    .primary-btn, .secondary-btn {
+      padding: 17px 32px;
+      border-radius: 16px;
+      text-decoration: none;
+      font-weight: 600;
+      font-size: 15px;
+      transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      position: relative;
+      overflow: hidden;
+    }
+    .primary-btn {
+      background: var(--gradient-main);
+      color: white;
+      box-shadow: 0 12px 32px rgba(147,51,234,0.3);
+    }
+    .primary-btn::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(135deg, rgba(255,255,255,0.15), transparent);
+      opacity: 0;
+      transition: opacity 0.3s;
+    }
+    .primary-btn:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 18px 40px rgba(147,51,234,0.4);
+    }
+    .primary-btn:hover::before { opacity: 1; }
+
+    .secondary-btn {
+      background: var(--glass);
+      border: 1px solid var(--glass-border);
+      color: var(--text-primary);
+      backdrop-filter: blur(16px);
+    }
+    .secondary-btn:hover {
+      transform: translateY(-4px);
+      background: var(--glass-hover);
+      box-shadow: 0 14px 32px rgba(0,0,0,0.3);
     }
 
-    .nav-links a{
-      text-decoration:none;
-      color:#d1d5db;
-      font-weight:500;
-      transition:0.3s;
+    /* Trusted bar */
+    .trusted-bar {
+      margin-top: 48px;
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      animation: fadeUp 0.8s ease 0.4s both;
+    }
+    .trusted-avatars {
+      display: flex;
+    }
+    .trusted-avatars span {
+      width: 36px; height: 36px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 14px;
+      margin-left: -8px;
+      border: 2px solid var(--bg-primary);
+    }
+    .trusted-avatars span:nth-child(1) { background: linear-gradient(135deg, #9333ea, #7c3aed); margin-left: 0; }
+    .trusted-avatars span:nth-child(2) { background: linear-gradient(135deg, #14b8a6, #0d9488); }
+    .trusted-avatars span:nth-child(3) { background: linear-gradient(135deg, #3b82f6, #2563eb); }
+    .trusted-avatars span:nth-child(4) { background: linear-gradient(135deg, #f59e0b, #d97706); }
+    .trusted-text {
+      font-size: 14px;
+      color: var(--text-muted);
+    }
+    .trusted-text strong {
+      color: var(--text-secondary);
     }
 
-    .nav-links a:hover{
-      color:white;
+    /* ===== Hero Right — Cards ===== */
+    .hero-right {
+      width: 44%;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 20px;
+      animation: fadeUp 0.8s ease 0.3s both;
     }
 
-    .nav-btn{
-      padding:14px 24px;
-      border-radius:40px;
-      text-decoration:none;
+    .card {
+      padding: 30px 26px;
+      border-radius: 24px;
+      background: rgba(15, 23, 42, 0.6);
+      border: 1px solid var(--glass-border);
+      backdrop-filter: blur(24px);
+      transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+      box-shadow: 0 8px 24px rgba(0,0,0,0.2);
+      position: relative;
+      overflow: hidden;
+    }
+    .card::before {
+      content: '';
+      position: absolute;
+      top: 0; right: 0;
+      width: 100px; height: 100px;
+      border-radius: 50%;
+      filter: blur(40px);
+      opacity: 0;
+      transition: opacity 0.5s;
+      pointer-events: none;
+    }
+    .card:hover {
+      transform: translateY(-10px) scale(1.02);
+      border-color: rgba(255,255,255,0.15);
+      box-shadow: 0 24px 48px rgba(0,0,0,0.4);
+    }
+    .card:hover::before { opacity: 0.2; }
 
-      background:linear-gradient(135deg,#9333ea,#14b8a6);
+    .card-icon {
+      width: 52px; height: 52px;
+      border-radius: 14px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 22px;
+      margin-bottom: 18px;
+    }
+    .doctor .card-icon { background: rgba(20,184,166,0.12); color: var(--accent-teal); }
+    .doctor::before { background: var(--accent-teal); }
+    .fire .card-icon { background: rgba(249,115,22,0.12); color: var(--accent-orange); }
+    .fire::before { background: var(--accent-orange); }
+    .blood .card-icon { background: rgba(239,68,68,0.12); color: var(--accent-red); }
+    .blood::before { background: var(--accent-red); }
+    .ngo .card-icon { background: rgba(147,51,234,0.12); color: var(--accent-purple); }
+    .ngo::before { background: var(--accent-purple); }
 
-      color:white;
-      font-weight:600;
-
-      transition:0.3s;
-
-      box-shadow:0 10px 25px rgba(147,51,234,0.3);
+    .card h3 {
+      font-size: 18px;
+      margin-bottom: 8px;
+      font-weight: 600;
+    }
+    .card p {
+      color: var(--text-muted);
+      font-size: 14px;
+      line-height: 1.6;
     }
 
-    .nav-btn:hover{
-      transform:translateY(-4px);
+    /* ===== Stats ===== */
+    .stats {
+      padding: 0 7% 100px;
+      display: flex;
+      justify-content: center;
+      gap: 24px;
+      flex-wrap: wrap;
+    }
+    .stat-box {
+      padding: 36px 52px;
+      border-radius: 24px;
+      background: rgba(15, 23, 42, 0.5);
+      border: 1px solid var(--glass-border);
+      backdrop-filter: blur(24px);
+      text-align: center;
+      transition: all 0.4s ease;
+      min-width: 200px;
+    }
+    .stat-box:hover {
+      transform: translateY(-6px);
+      border-color: rgba(255,255,255,0.12);
+      box-shadow: 0 16px 40px rgba(0,0,0,0.3);
+    }
+    .stat-box h2 {
+      font-size: 48px;
+      margin-bottom: 8px;
+      font-weight: 700;
+      background: var(--gradient-main);
+      background-clip: text;
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+    .stat-box p {
+      color: var(--text-secondary);
+      font-size: 15px;
     }
 
-    /* =========================
-       HERO SECTION
-    ========================== */
-
-    .hero{
-      min-height:100vh;
-
-      display:flex;
-      justify-content:space-between;
-      align-items:center;
-
-      padding:140px 7%;
-      gap:60px;
+    /* ===== Section Headers ===== */
+    .section-header {
+      text-align: center;
+      margin-bottom: 56px;
+    }
+    .section-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 8px 18px;
+      border-radius: 99px;
+      background: var(--glass);
+      border: 1px solid var(--glass-border);
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--accent-teal);
+      margin-bottom: 20px;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+    .section-header h2 {
+      font-size: 48px;
+      font-weight: 700;
+      margin-bottom: 16px;
+      letter-spacing: -1px;
+    }
+    .section-header p {
+      color: var(--text-muted);
+      font-size: 17px;
+      max-width: 560px;
+      margin: 0 auto;
+      line-height: 1.7;
     }
 
-    .hero-left{
-      width:50%;
-      animation:fadeUp 1.2s ease;
+    /* ===== How It Works ===== */
+    .how-it-works {
+      padding: 100px 7%;
+    }
+    .steps {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 24px;
+      position: relative;
+    }
+    /* Connector line */
+    .steps::before {
+      content: '';
+      position: absolute;
+      top: 56px;
+      left: 15%;
+      right: 15%;
+      height: 2px;
+      background: linear-gradient(90deg, var(--accent-purple), var(--accent-teal), var(--accent-orange));
+      opacity: 0.2;
+      z-index: 0;
+    }
+    .step {
+      padding: 36px 30px;
+      border-radius: 24px;
+      background: rgba(15, 23, 42, 0.5);
+      border: 1px solid var(--glass-border);
+      backdrop-filter: blur(20px);
+      transition: all 0.4s ease;
+      text-align: center;
+      position: relative;
+      z-index: 1;
+    }
+    .step:hover {
+      transform: translateY(-8px);
+      border-color: rgba(255,255,255,0.12);
+      box-shadow: 0 20px 40px rgba(0,0,0,0.3);
+    }
+    .step-number {
+      width: 48px; height: 48px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 18px;
+      font-weight: 700;
+      margin: 0 auto 20px;
+      border: 2px solid transparent;
+    }
+    .step:nth-child(1) .step-number {
+      background: rgba(147,51,234,0.12);
+      color: var(--accent-purple);
+      border-color: rgba(147,51,234,0.2);
+    }
+    .step:nth-child(2) .step-number {
+      background: rgba(20,184,166,0.12);
+      color: var(--accent-teal);
+      border-color: rgba(20,184,166,0.2);
+    }
+    .step:nth-child(3) .step-number {
+      background: rgba(249,115,22,0.12);
+      color: var(--accent-orange);
+      border-color: rgba(249,115,22,0.2);
+    }
+    .step-icon {
+      font-size: 32px;
+      margin-bottom: 6px;
+    }
+    .step h3 {
+      font-size: 20px;
+      font-weight: 600;
+      margin-bottom: 10px;
+    }
+    .step p {
+      color: var(--text-muted);
+      font-size: 14px;
+      line-height: 1.7;
     }
 
-    .badge{
-      display:inline-flex;
-      align-items:center;
-      gap:10px;
-
-      padding:12px 20px;
-      border-radius:50px;
-
-      margin-bottom:30px;
-
-      background:rgba(255,255,255,0.08);
-
-      border:1px solid rgba(255,255,255,0.1);
-
-      backdrop-filter:blur(18px);
+    /* ===== Impact / Services ===== */
+    .impact {
+      padding: 100px 7%;
+    }
+    .impact-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 20px;
+    }
+    .impact-card {
+      padding: 32px 28px;
+      border-radius: 24px;
+      background: rgba(15, 23, 42, 0.5);
+      border: 1px solid var(--glass-border);
+      backdrop-filter: blur(20px);
+      transition: all 0.4s ease;
+      position: relative;
+      overflow: hidden;
+    }
+    .impact-card:hover {
+      transform: translateY(-6px);
+      border-color: rgba(255,255,255,0.12);
+      box-shadow: 0 16px 40px rgba(0,0,0,0.3);
+    }
+    .impact-icon {
+      width: 52px; height: 52px;
+      border-radius: 14px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 24px;
+      margin-bottom: 18px;
+    }
+    .impact-card:nth-child(1) .impact-icon { background: rgba(239,68,68,0.12); }
+    .impact-card:nth-child(2) .impact-icon { background: rgba(239,68,68,0.12); }
+    .impact-card:nth-child(3) .impact-icon { background: rgba(249,115,22,0.12); }
+    .impact-card h3 {
+      font-size: 18px;
+      font-weight: 600;
+      margin-bottom: 8px;
+    }
+    .impact-card p {
+      color: var(--text-muted);
+      font-size: 14px;
+      line-height: 1.7;
     }
 
-    .badge i{
-      color:#f97316;
+    /* ===== CTA Section ===== */
+    .cta-section {
+      padding: 80px 7%;
+    }
+    .cta-card {
+      max-width: 900px;
+      margin: 0 auto;
+      padding: 60px;
+      border-radius: 32px;
+      background: linear-gradient(135deg, rgba(147,51,234,0.12), rgba(20,184,166,0.08));
+      border: 1px solid rgba(147,51,234,0.2);
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+    }
+    .cta-card::before {
+      content: '';
+      position: absolute;
+      top: -50%; left: -50%;
+      width: 200%; height: 200%;
+      background: conic-gradient(from 0deg, transparent, rgba(147,51,234,0.06), transparent, rgba(20,184,166,0.04), transparent);
+      animation: rotateBg 20s linear infinite;
+    }
+    .cta-content {
+      position: relative;
+      z-index: 1;
+    }
+    .cta-card h2 {
+      font-size: 40px;
+      font-weight: 700;
+      margin-bottom: 16px;
+      letter-spacing: -1px;
+    }
+    .cta-card p {
+      color: var(--text-secondary);
+      font-size: 17px;
+      margin-bottom: 36px;
+      max-width: 500px;
+      margin-left: auto;
+      margin-right: auto;
+      line-height: 1.7;
+    }
+    .cta-buttons {
+      display: flex;
+      justify-content: center;
+      gap: 16px;
+      flex-wrap: wrap;
     }
 
-    .hero-left h1{
-      font-size:96px;
-      line-height:0.95;
-      margin-bottom:30px;
-      font-weight:800;
+    /* ===== Footer ===== */
+    .footer {
+      padding: 50px 7%;
+      text-align: center;
+      background: rgba(2, 6, 23, 0.8);
+      border-top: 1px solid var(--glass-border);
+    }
+    .footer-logo {
+      font-size: 26px;
+      font-weight: 700;
+      margin-bottom: 12px;
+    }
+    .footer-logo span {
+      background: var(--gradient-main);
+      background-clip: text;
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+    .footer p {
+      color: var(--text-muted);
+      font-size: 14px;
+      line-height: 1.8;
+    }
+    .footer-links {
+      display: flex;
+      justify-content: center;
+      gap: 24px;
+      margin: 20px 0;
+    }
+    .footer-links a {
+      color: var(--text-secondary);
+      text-decoration: none;
+      font-size: 14px;
+      transition: color 0.3s;
+    }
+    .footer-links a:hover {
+      color: var(--accent-teal);
+    }
+    .footer-divider {
+      width: 60px;
+      height: 2px;
+      background: var(--gradient-main);
+      margin: 20px auto;
+      border-radius: 99px;
     }
 
-    .hero-left h1 span{
-      background:linear-gradient(135deg,#14b8a6,#9333ea);
-
-      background-clip:text;
-      -webkit-background-clip:text;
-      -webkit-text-fill-color:transparent;
-    }
-
-    .hero-left p{
-      font-size:18px;
-      color:#d1d5db;
-      line-height:1.8;
-
-      margin-bottom:40px;
-
-      max-width:650px;
-    }
-
-    .hero-buttons{
-      display:flex;
-      gap:20px;
-      flex-wrap:wrap;
-    }
-
-    .primary-btn,
-    .secondary-btn{
-
-      padding:18px 30px;
-
-      border-radius:18px;
-
-      text-decoration:none;
-
-      font-weight:600;
-
-      transition:0.4s;
-    }
-
-    .primary-btn{
-      background:linear-gradient(135deg,#9333ea,#14b8a6);
-
-      color:white;
-
-      box-shadow:0 15px 35px rgba(147,51,234,0.35);
-    }
-
-    .secondary-btn{
-      background:rgba(255,255,255,0.08);
-
-      border:1px solid rgba(255,255,255,0.1);
-
-      color:white;
-
-      backdrop-filter:blur(16px);
-    }
-
-    .primary-btn:hover,
-    .secondary-btn:hover{
-      transform:translateY(-6px);
-    }
-
-    /* =========================
-       HERO RIGHT
-    ========================== */
-
-    .hero-right{
-      width:45%;
-
-      display:grid;
-
-      grid-template-columns:1fr 1fr;
-
-      gap:24px;
-    }
-
-    .card{
-
-      padding:32px;
-
-      border-radius:28px;
-
-      background:rgba(255,255,255,0.08);
-
-      border:1px solid rgba(255,255,255,0.08);
-
-      backdrop-filter:blur(24px);
-
-      transition:0.5s;
-
-      box-shadow:
-      0 10px 30px rgba(0,0,0,0.25);
-    }
-
-    .card:hover{
-
-      transform:
-      translateY(-12px)
-      scale(1.04)
-      rotateX(4deg);
-
-      box-shadow:
-      0 20px 50px rgba(147,51,234,0.4),
-      0 0 40px rgba(20,184,166,0.3);
-    }
-
-    .card i{
-      font-size:44px;
-      margin-bottom:20px;
-    }
-
-    .doctor i{
-      color:#14b8a6;
-    }
-
-    .fire i{
-      color:#f97316;
-    }
-
-    .blood i{
-      color:#ef4444;
-    }
-
-    .ngo i{
-      color:#9333ea;
-    }
-
-    .card h3{
-      font-size:24px;
-      margin-bottom:12px;
-    }
-
-    .card p{
-      color:#d1d5db;
-      line-height:1.7;
-    }
-
-    /* =========================
-       STATS
-    ========================== */
-
-    .stats{
-      padding:0 7% 100px;
-
-      display:flex;
-      justify-content:center;
-      gap:30px;
-      flex-wrap:wrap;
-    }
-
-    .stat-box{
-
-      padding:40px 60px;
-
-      border-radius:28px;
-
-      background:rgba(255,255,255,0.08);
-
-      border:1px solid rgba(255,255,255,0.08);
-
-      backdrop-filter:blur(24px);
-
-      text-align:center;
-    }
-
-    .stat-box h2{
-      font-size:52px;
-      margin-bottom:12px;
-
-      background:linear-gradient(135deg,#14b8a6,#9333ea);
-
-      background-clip:text;
-      -webkit-background-clip:text;
-      -webkit-text-fill-color:transparent;
-    }
-
-    .stat-box p{
-      color:#d1d5db;
-      font-size:16px;
-    }
-
-    /* =========================
-       ANIMATION
-    ========================== */
-
+    /* ===== Animations ===== */
     @keyframes fadeUp {
-
-      from{
-        opacity:0;
-        transform:translateY(40px);
-      }
-
-      to{
-        opacity:1;
-        transform:translateY(0px);
-      }
-
+      from { opacity: 0; transform: translateY(30px); }
+      to { opacity: 1; transform: translateY(0); }
     }
 
-    /* =========================
-       RESPONSIVE
-    ========================== */
-
-    @media(max-width:1000px){
-
-      .hero{
-        flex-direction:column;
-        text-align:center;
-      }
-
-      .hero-left,
-      .hero-right{
-        width:100%;
-      }
-
-      .hero-left h1{
-        font-size:62px;
-      }
-
-      .hero-buttons{
-        justify-content:center;
-      }
-
-      .hero-right{
-        grid-template-columns:1fr;
-      }
-
-      .nav-links{
-        display:none;
-      }
-
+    /* Scroll reveal */
+    .reveal {
+      opacity: 0;
+      transform: translateY(30px);
+      transition: all 0.8s cubic-bezier(0.16, 1, 0.3, 1);
     }
-    .how-it-works,
-.impact{
+    .reveal.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
 
-padding:100px 7%;
-text-align:center;
-}
+    /* ===== Responsive ===== */
+    @media (max-width: 1000px) {
+      .hero {
+        flex-direction: column;
+        text-align: center;
+        padding: 120px 6% 80px;
+        gap: 48px;
+      }
+      .hero-left, .hero-right {
+        width: 100%;
+      }
+      .hero-left h1 {
+        font-size: 52px;
+      }
+      .hero-left p {
+        max-width: 100%;
+      }
+      .hero-buttons {
+        justify-content: center;
+      }
+      .trusted-bar {
+        justify-content: center;
+      }
+      .hero-right {
+        max-width: 500px;
+        margin: 0 auto;
+      }
+      .nav-links {
+        display: none;
+      }
+      .nav-toggle {
+        display: block;
+      }
+      .steps {
+        grid-template-columns: 1fr;
+        max-width: 400px;
+        margin: 0 auto;
+      }
+      .steps::before { display: none; }
+      .section-header h2 {
+        font-size: 36px;
+      }
+      .cta-card {
+        padding: 40px 24px;
+      }
+      .cta-card h2 {
+        font-size: 30px;
+      }
+    }
 
-.how-it-works h2,
-.impact h2{
-
-font-size:48px;
-margin-bottom:60px;
-}
-
-.steps,
-.impact-grid{
-
-display:grid;
-grid-template-columns:
-repeat(auto-fit,minmax(280px,1fr));
-
-gap:30px;
-}
-
-.step,
-.impact-card{
-
-padding:35px;
-
-border-radius:30px;
-
-background:
-rgba(255,255,255,0.08);
-
-border:
-1px solid rgba(255,255,255,0.08);
-
-backdrop-filter:blur(20px);
-
-transition:.4s;
-}
-
-.step:hover,
-.impact-card:hover{
-
-transform:translateY(-10px);
-}
-
-.step i{
-
-font-size:48px;
-margin-bottom:20px;
-
-color:#14b8a6;
-}
-
-.footer{
-
-padding:60px 7%;
-
-text-align:center;
-
-background:
-rgba(255,255,255,0.04);
-
-border-top:
-1px solid rgba(255,255,255,0.08);
-}
+    @media (max-width: 600px) {
+      .hero-left h1 {
+        font-size: 40px;
+      }
+      .hero-right {
+        grid-template-columns: 1fr;
+      }
+      .stats {
+        flex-direction: column;
+        align-items: center;
+      }
+      .stat-box {
+        width: 100%;
+        max-width: 300px;
+      }
+    }
 
   </style>
 
@@ -614,132 +815,119 @@ border-top:
 
 <body>
 
-  <!-- BACKGROUND -->
-
+  <!-- Background -->
   <div class="animated-bg"></div>
-
   <div class="particles"></div>
-
   <div class="orb orb1"></div>
   <div class="orb orb2"></div>
   <div class="orb orb3"></div>
 
-  <!-- NAVBAR -->
+  <!-- Navbar -->
+  <nav class="navbar" id="navbar">
+    <div class="logo">Help<span>Hive</span></div>
 
-  <nav class="navbar">
-
-    <div class="logo">
-      Help<span>Hive</span>
+    <div class="nav-links" id="navLinks">
+      <a href="#hero">Home</a>
+      <a href="#how-it-works">How It Works</a>
+      <a href="#impact">Services</a>
+      <a href="/volunteer_login" class="nav-btn">
+        <i class="fa-solid fa-shield-halved"></i>
+        Volunteer Portal
+      </a>
     </div>
 
-    <div class="nav-links">
-      <a href="#">Home</a>
-      <a href="#">Services</a>
-      <a href="#">Volunteers</a>
-      <a href="#">Emergency</a>
-      <a href="#">Contact</a>
-    </div>
-
-
+    <button class="nav-toggle" id="navToggle" aria-label="Toggle menu">
+      <i class="fa-solid fa-bars"></i>
+    </button>
   </nav>
 
-  <!-- HERO -->
-
-  <section class="hero">
+  <!-- Hero -->
+  <section class="hero" id="hero">
 
     <div class="hero-left">
 
       <div class="badge">
-        <i class="fa-solid fa-bolt"></i>
+        <span class="badge-dot"></span>
         24/7 Emergency Community Support
       </div>
 
       <h1>
-        Together We Can
-        <span>Save Lives</span>
+        Together We<br>
+        Can <span>Save</span><br>
+        <span class="line2">Lives</span>
       </h1>
 
       <p>
         A premium emergency support platform connecting people with doctors,
-        blood donors, rescue teams, ambulance drivers, NGO volunteers,
-        and disaster response communities in real time.
+        blood donors, rescue teams, ambulance drivers, and volunteer communities in real time.
       </p>
 
       <div class="hero-buttons">
-
         <a href="/request-help" class="primary-btn">
-          <i class="fa-solid fa-user"></i>
-         Request Help
+          <i class="fa-solid fa-paper-plane"></i>
+          Request Help
         </a>
-
         <a href="/volunteer_login" class="secondary-btn">
           <i class="fa-solid fa-user-shield"></i>
           Volunteer Portal
         </a>
+      </div>
 
+      <div class="trusted-bar">
+        <div class="trusted-avatars">
+          <span>👨‍⚕️</span>
+          <span>🧑‍🚒</span>
+          <span>🩸</span>
+          <span>🤝</span>
+        </div>
+        <div class="trusted-text">
+          <strong>2,000+</strong> verified volunteers active
+        </div>
       </div>
 
     </div>
 
-    <!-- RIGHT -->
-
+    <!-- Right Cards -->
     <div class="hero-right">
 
       <div class="card doctor">
-
-        <i class="fa-solid fa-user-doctor"></i>
-
+        <div class="card-icon">
+          <i class="fa-solid fa-user-doctor"></i>
+        </div>
         <h3>Medical Help</h3>
-
-        <p>
-          Doctors, nurses and healthcare volunteers available instantly.
-        </p>
-
+        <p>Doctors & nurses available for emergency medical support.</p>
       </div>
 
       <div class="card fire">
-
-        <i class="fa-solid fa-fire-extinguisher"></i>
-
+        <div class="card-icon">
+          <i class="fa-solid fa-fire-extinguisher"></i>
+        </div>
         <h3>Fire Rescue</h3>
-
-        <p>
-          Fire rescue and disaster response volunteers for emergencies.
-        </p>
-
+        <p>Trained rescue volunteers for fire & disaster emergencies.</p>
       </div>
 
       <div class="card blood">
-
-        <i class="fa-solid fa-droplet"></i>
-
+        <div class="card-icon">
+          <i class="fa-solid fa-droplet"></i>
+        </div>
         <h3>Blood Donor</h3>
-
-        <p>
-          Find nearby blood donors instantly during emergency situations.
-        </p>
-
+        <p>Find nearby blood donors instantly during critical situations.</p>
       </div>
 
       <div class="card ngo">
-
-        <i class="fa-solid fa-hand-holding-heart"></i>
-
+        <div class="card-icon">
+          <i class="fa-solid fa-hand-holding-heart"></i>
+        </div>
         <h3>NGO Support</h3>
-
-        <p>
-          NGOs and volunteers providing community support 24/7.
-        </p>
-
+        <p>Community organizations providing 24/7 humanitarian aid.</p>
       </div>
 
     </div>
 
   </section>
 
-  <!-- STATS -->
-
-  <section class="stats">
+  <!-- Stats -->
+  <section class="stats reveal">
 
     <div class="stat-box">
       <h2>2K+</h2>
@@ -748,82 +936,183 @@ border-top:
 
     <div class="stat-box">
       <h2>10K+</h2>
-      <p>Requests Solved</p>
+      <p>Requests Resolved</p>
     </div>
 
     <div class="stat-box">
       <h2>24/7</h2>
-      <p>Emergency Support</p>
+      <p>Always Available</p>
+    </div>
+
+    <div class="stat-box">
+      <h2>&lt;2 min</h2>
+      <p>Avg. Response Time</p>
     </div>
 
   </section>
-<section class="how-it-works">
 
-<h2>How HelpHive Works</h2>
+  <!-- How It Works -->
+  <section class="how-it-works reveal" id="how-it-works">
 
-<div class="steps">
+    <div class="section-header">
+      <div class="section-badge">
+        <i class="fa-solid fa-gear"></i>
+        Process
+      </div>
+      <h2>How HelpHive Works</h2>
+      <p>Three simple steps to get emergency help from verified volunteers near you</p>
+    </div>
 
-<div class="step">
-<i class="fa-solid fa-triangle-exclamation"></i>
-<h3>Request Help</h3>
-<p>Submit your emergency request with location and category.</p>
-</div>
+    <div class="steps">
 
-<div class="step">
-<i class="fa-solid fa-bell"></i>
-<h3>Volunteers Notified</h3>
-<p>Nearby volunteers instantly receive emergency alerts.</p>
-</div>
+      <div class="step">
+        <div class="step-number">1</div>
+        <div class="step-icon">🚨</div>
+        <h3>Request Help</h3>
+        <p>Submit your emergency request with your location and the type of help you need.</p>
+      </div>
 
-<div class="step">
-<i class="fa-solid fa-handshake"></i>
-<h3>Help Delivered</h3>
-<p>Volunteers respond and resolve the emergency quickly.</p>
-</div>
+      <div class="step">
+        <div class="step-number">2</div>
+        <div class="step-icon">🔔</div>
+        <h3>Volunteers Notified</h3>
+        <p>Nearby volunteers matching your category receive instant real-time alerts.</p>
+      </div>
 
-</div>
+      <div class="step">
+        <div class="step-number">3</div>
+        <div class="step-icon">✅</div>
+        <h3>Help Delivered</h3>
+        <p>Volunteers accept and respond to your request — help is on the way.</p>
+      </div>
 
-</section>
-<section class="impact">
+    </div>
 
-<h2>Real World Impact</h2>
+  </section>
 
-<div class="impact-grid">
+  <!-- Impact -->
+  <section class="impact reveal" id="impact">
 
-<div class="impact-card">
-🚑
-<h3>Medical Emergencies</h3>
-<p>Connect patients with nearby healthcare volunteers.</p>
-</div>
+    <div class="section-header">
+      <div class="section-badge">
+        <i class="fa-solid fa-heart-pulse"></i>
+        Impact
+      </div>
+      <h2>Real World Impact</h2>
+      <p>HelpHive empowers communities to respond faster during emergencies</p>
+    </div>
 
-<div class="impact-card">
-🩸
-<h3>Blood Donation</h3>
-<p>Find blood donors instantly during critical situations.</p>
-</div>
+    <div class="impact-grid">
 
-<div class="impact-card">
-🔥
-<h3>Disaster Relief</h3>
-<p>Coordinate community support during emergencies.</p>
-</div>
+      <div class="impact-card">
+        <div class="impact-icon">🚑</div>
+        <h3>Medical Emergencies</h3>
+        <p>Connect patients with nearby healthcare volunteers for urgent medical care.</p>
+      </div>
 
-</div>
+      <div class="impact-card">
+        <div class="impact-icon">🩸</div>
+        <h3>Blood Donation</h3>
+        <p>Find blood donors instantly during critical situations and save lives.</p>
+      </div>
 
-</section>
-<footer class="footer">
+      <div class="impact-card">
+        <div class="impact-icon">🔥</div>
+        <h3>Disaster Relief</h3>
+        <p>Coordinate community support and rescue operations during emergencies.</p>
+      </div>
 
-<h2>HelpHive</h2>
+    </div>
 
-<p>
-Connecting Communities. Saving Lives.
-</p>
+  </section>
 
-<p>
-GM University | Flask + AWS DynamoDB Project
-</p>
+  <!-- CTA -->
+  <section class="cta-section reveal">
 
-</footer>
+    <div class="cta-card">
+      <div class="cta-content">
+        <h2>Ready to Make a Difference?</h2>
+        <p>Join HelpHive today — whether you need help or want to be a hero in your community.</p>
+        <div class="cta-buttons">
+          <a href="/request-help" class="primary-btn">
+            <i class="fa-solid fa-paper-plane"></i>
+            Request Help Now
+          </a>
+          <a href="/volunteer_login" class="secondary-btn">
+            <i class="fa-solid fa-user-plus"></i>
+            Become a Volunteer
+          </a>
+        </div>
+      </div>
+    </div>
+
+  </section>
+
+  <!-- Footer -->
+  <footer class="footer">
+    <div class="footer-logo">Help<span>Hive</span></div>
+    <p>Connecting Communities. Saving Lives.</p>
+    <div class="footer-divider"></div>
+    <div class="footer-links">
+      <a href="/">Home</a>
+      <a href="/request-help">Request Help</a>
+      <a href="/volunteer_login">Volunteer</a>
+    </div>
+    <p style="margin-top:16px; font-size:13px;">
+      GM University | Flask + AWS DynamoDB Project
+    </p>
+  </footer>
+
+  <script>
+
+  // Navbar scroll effect
+  window.addEventListener('scroll', () => {
+    const navbar = document.getElementById('navbar');
+    if (window.scrollY > 60) {
+      navbar.classList.add('scrolled');
+    } else {
+      navbar.classList.remove('scrolled');
+    }
+  });
+
+  // Mobile nav toggle
+  const navToggle = document.getElementById('navToggle');
+  const navLinks = document.getElementById('navLinks');
+  if (navToggle) {
+    navToggle.addEventListener('click', () => {
+      const isVisible = navLinks.style.display === 'flex';
+      navLinks.style.display = isVisible ? 'none' : 'flex';
+      navLinks.style.flexDirection = 'column';
+      navLinks.style.position = 'absolute';
+      navLinks.style.top = '70px';
+      navLinks.style.right = '7%';
+      navLinks.style.background = 'rgba(15,23,42,0.95)';
+      navLinks.style.backdropFilter = 'blur(24px)';
+      navLinks.style.border = '1px solid rgba(255,255,255,0.08)';
+      navLinks.style.borderRadius = '16px';
+      navLinks.style.padding = '16px';
+      navLinks.style.gap = '8px';
+      navLinks.style.zIndex = '200';
+      if (isVisible) {
+        navLinks.style.cssText = '';
+      }
+    });
+  }
+
+  // Scroll reveal
+  const revealElements = document.querySelectorAll('.reveal');
+  const revealObserver = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        entry.target.classList.add('visible');
+        revealObserver.unobserve(entry.target);
+      }
+    });
+  }, { threshold: 0.15 });
+
+  revealElements.forEach(el => revealObserver.observe(el));
+
+  </script>
+
 </body>
-
 </html>

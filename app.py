@@ -1,7 +1,9 @@
+# pyrefly: ignore [missing-import]
 from flask import Flask, render_template, request, redirect, session
 from datetime import datetime, timedelta
 from math import radians, sin, cos, sqrt, atan2
 from flask_socketio import SocketIO
+# pyrefly: ignore [missing-import]
 from dotenv import load_dotenv
 import os
 import boto3
@@ -26,24 +28,31 @@ socketio = SocketIO(app)
 
 def calculate_distance(lat1, lon1, lat2, lon2):
 
-    R = 6371  # Earth radius in KM
+    # Return None if any coordinate is missing/empty
+    if not lat1 or not lon1 or not lat2 or not lon2:
+        return None
 
-    lat1 = radians(float(lat1))
-    lon1 = radians(float(lon1))
-    lat2 = radians(float(lat2))
-    lon2 = radians(float(lon2))
+    try:
+        R = 6371  # Earth radius in KM
 
-    dlat = lat2 - lat1
-    dlon = lon2 - lon1
+        lat1 = radians(float(lat1))
+        lon1 = radians(float(lon1))
+        lat2 = radians(float(lat2))
+        lon2 = radians(float(lon2))
 
-    a = (
-        sin(dlat / 2) ** 2
-        + cos(lat1) * cos(lat2) * sin(dlon / 2) ** 2
-    )
+        dlat = lat2 - lat1
+        dlon = lon2 - lon1
 
-    c = 2 * atan2(sqrt(a), sqrt(1 - a))
+        a = (
+            sin(dlat / 2) ** 2
+            + cos(lat1) * cos(lat2) * sin(dlon / 2) ** 2
+        )
 
-    return round(R * c, 2)
+        c = 2 * atan2(sqrt(a), sqrt(1 - a))
+
+        return round(R * c, 2)
+    except (ValueError, TypeError):
+        return None
 
 @app.route('/aws-test')
 def aws_test():
@@ -210,15 +219,15 @@ def volunteer():
 
     filtered_requests = []
 
-    volunteer_lat = current_volunteer['latitude']
-    volunteer_lon = current_volunteer['longitude']
+    volunteer_lat = current_volunteer.get('latitude', '')
+    volunteer_lon = current_volunteer.get('longitude', '')
 
     for req in all_requests:
 
-        request_category = req['category']
+        request_category = req.get('category', '')
 
-        request_lat = req['latitude']
-        request_lon = req['longitude']
+        request_lat = req.get('latitude', '')
+        request_lon = req.get('longitude', '')
 
         distance = calculate_distance(
             volunteer_lat,
@@ -227,7 +236,7 @@ def volunteer():
             request_lon
         )
 
-        if distance <= 10:
+        if distance is not None and distance <= 10:
 
             req['distance'] = distance
 
@@ -242,14 +251,49 @@ def volunteer():
 
     notification_count = len(filtered_requests)
 
+    # Analytics data for charts
+    status_counts = {'Pending': 0, 'Accepted': 0, 'Completed': 0}
+    priority_counts = {'High': 0, 'Medium': 0, 'Low': 0}
+    category_counts = {}
+
+    for req in filtered_requests:
+        s = req.get('status', 'Pending')
+        if s in status_counts:
+            status_counts[s] += 1
+
+        p = req.get('priority', 'Low')
+        if p in priority_counts:
+            priority_counts[p] += 1
+
+        cat = req.get('category', 'Other')
+        category_counts[cat] = category_counts.get(cat, 0) + 1
+
+    import json
+
+    # Serialize all data for JS to avoid Jinja in script tags
+    request_data_json = json.dumps([
+        {
+            'lat': float(req.get('latitude', 0) or 0),
+            'lon': float(req.get('longitude', 0) or 0),
+            'category': req.get('category', ''),
+            'address': req.get('address', ''),
+            'distance': str(req.get('distance', ''))
+        }
+        for req in filtered_requests
+    ])
+
     return render_template(
-    'volunteer.html',
-    requests=filtered_requests,
-    notification_count=notification_count,
-    volunteer_lat=volunteer_lat,
-    volunteer_lon=volunteer_lon,
-    current_volunteer=current_volunteer
-)
+        'volunteer.html',
+        requests=filtered_requests,
+        notification_count=notification_count,
+        volunteer_lat=volunteer_lat or 0,
+        volunteer_lon=volunteer_lon or 0,
+        current_volunteer=current_volunteer,
+        status_json=json.dumps(status_counts),
+        priority_json=json.dumps(priority_counts),
+        category_json=json.dumps(category_counts),
+        request_data_json=request_data_json
+    )
 # ================= LOGOUT =================
 
 @app.route('/logout')
@@ -320,7 +364,8 @@ def delete(request_id):
     }
 )
    return redirect('/volunteer')
-    # ================= RUN =================
+
+# ================= RUN =================
 
 if __name__ == '__main__':
-    socketio.run(app, debug=True)
+    socketio.run(app, debug=True, allow_unsafe_werkzeug=True)

@@ -5,228 +5,400 @@
 
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="Login or register as a HelpHive volunteer to respond to nearby emergency requests.">
 
-<title>Volunteer Portal</title>
+<title>Volunteer Portal — HelpHive</title>
 
 <link rel="stylesheet"
-href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+  href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 
 <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap"
-rel="stylesheet">
+  rel="stylesheet">
 
 <style>
 
-*{
-margin:0;
-padding:0;
-box-sizing:border-box;
+/* ===== Variables ===== */
+:root {
+  --bg-primary: #020617;
+  --bg-secondary: #0f172a;
+  --bg-tertiary: #111827;
+  --glass: rgba(255, 255, 255, 0.05);
+  --glass-border: rgba(255, 255, 255, 0.08);
+  --glass-input: rgba(255, 255, 255, 0.07);
+  --accent-purple: #9333ea;
+  --accent-teal: #14b8a6;
+  --accent-green: #22c55e;
+  --text-primary: #f1f5f9;
+  --text-secondary: #94a3b8;
+  --text-muted: #64748b;
 }
 
-body{
-font-family:'Outfit',sans-serif;
-min-height:100vh;
-
-display:flex;
-justify-content:center;
-align-items:center;
-
-background:
-linear-gradient(135deg,#020617,#111827,#0f172a);
-
-overflow:hidden;
-
-color:white;
+/* ===== Reset ===== */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
 }
 
-.orb{
-position:absolute;
-border-radius:50%;
-filter:blur(120px);
-opacity:0.4;
+body {
+  font-family: 'Outfit', sans-serif;
+  min-height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: linear-gradient(135deg, var(--bg-primary), var(--bg-tertiary), var(--bg-secondary));
+  overflow: hidden;
+  color: var(--text-primary);
 }
 
-.orb1{
-width:350px;
-height:350px;
-background:#9333ea;
-top:-100px;
-left:-100px;
+/* ===== Background ===== */
+.orb {
+  position: fixed;
+  border-radius: 50%;
+  filter: blur(140px);
+  z-index: 0;
+  pointer-events: none;
+}
+.orb1 {
+  width: 450px;
+  height: 450px;
+  background: var(--accent-purple);
+  top: -120px;
+  left: -120px;
+  opacity: 0.3;
+  animation: floatOrb 12s ease-in-out infinite;
+}
+.orb2 {
+  width: 400px;
+  height: 400px;
+  background: var(--accent-teal);
+  bottom: -120px;
+  right: -120px;
+  opacity: 0.25;
+  animation: floatOrb 14s ease-in-out infinite reverse;
+}
+.orb3 {
+  width: 250px;
+  height: 250px;
+  background: #3b82f6;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  opacity: 0.08;
 }
 
-.orb2{
-width:300px;
-height:300px;
-background:#14b8a6;
-bottom:-100px;
-right:-100px;
+@keyframes floatOrb {
+  0%, 100% { transform: translateY(0) scale(1); }
+  50% { transform: translateY(-30px) scale(1.05); }
 }
 
-.container{
-width:90%;
-max-width:1100px;
-
-display:grid;
-grid-template-columns:1fr 1fr;
-
-background:rgba(255,255,255,0.06);
-
-border:1px solid rgba(255,255,255,0.1);
-
-backdrop-filter:blur(24px);
-
-border-radius:30px;
-
-overflow:hidden;
-
-z-index:10;
+/* Particles */
+.particles {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  background-image: radial-gradient(rgba(255,255,255,0.5) 1px, transparent 1px);
+  background-size: 50px 50px;
+  opacity: 0.04;
 }
 
-.left{
-padding:60px;
-
-display:flex;
-flex-direction:column;
-justify-content:center;
+/* ===== Container ===== */
+.container {
+  width: 92%;
+  max-width: 1100px;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  background: rgba(15, 23, 42, 0.7);
+  border: 1px solid var(--glass-border);
+  backdrop-filter: blur(30px);
+  border-radius: 32px;
+  overflow: hidden;
+  z-index: 10;
+  position: relative;
+  box-shadow: 0 30px 80px rgba(0, 0, 0, 0.5);
+  animation: scaleIn 0.6s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
-.left h1{
-font-size:58px;
-line-height:1;
-margin-bottom:20px;
+@keyframes scaleIn {
+  from { opacity: 0; transform: scale(0.95) translateY(20px); }
+  to { opacity: 1; transform: scale(1) translateY(0); }
 }
 
-.left h1 span{
-background:linear-gradient(135deg,#14b8a6,#9333ea);
-
-background-clip:text;
--webkit-background-clip:text;
--webkit-text-fill-color:transparent;
+/* ===== Left Panel ===== */
+.left {
+  padding: 60px 50px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  position: relative;
+  overflow: hidden;
+}
+.left::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(135deg, rgba(147, 51, 234, 0.06), rgba(20, 184, 166, 0.04));
+  pointer-events: none;
+}
+.left-content {
+  position: relative;
+  z-index: 1;
+}
+.left h1 {
+  font-size: 52px;
+  line-height: 1.05;
+  margin-bottom: 18px;
+  font-weight: 700;
+}
+.left h1 span {
+  background: linear-gradient(135deg, var(--accent-teal), var(--accent-purple));
+  background-clip: text;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+.left p {
+  color: var(--text-secondary);
+  line-height: 1.8;
+  margin-bottom: 36px;
+  font-size: 15px;
 }
 
-.left p{
-color:#cbd5e1;
-line-height:1.8;
-margin-bottom:30px;
+/* Features */
+.features {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+.feature {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  color: var(--text-secondary);
+  font-size: 15px;
+  padding: 12px 16px;
+  border-radius: 14px;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid transparent;
+  transition: all 0.3s ease;
+}
+.feature:hover {
+  background: rgba(255, 255, 255, 0.06);
+  border-color: var(--glass-border);
+  transform: translateX(6px);
+}
+.feature-icon {
+  width: 38px;
+  height: 38px;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 16px;
+  flex-shrink: 0;
+}
+.feature:nth-child(1) .feature-icon {
+  background: rgba(20, 184, 166, 0.12);
+  color: var(--accent-teal);
+}
+.feature:nth-child(2) .feature-icon {
+  background: rgba(147, 51, 234, 0.12);
+  color: var(--accent-purple);
+}
+.feature:nth-child(3) .feature-icon {
+  background: rgba(59, 130, 246, 0.12);
+  color: #3b82f6;
+}
+.feature:nth-child(4) .feature-icon {
+  background: rgba(245, 158, 11, 0.12);
+  color: #f59e0b;
 }
 
-.features{
-display:flex;
-flex-direction:column;
-gap:18px;
+/* ===== Right Panel ===== */
+.right {
+  padding: 50px 46px;
+  background: rgba(255, 255, 255, 0.02);
+  border-left: 1px solid var(--glass-border);
 }
 
-.feature{
-display:flex;
-align-items:center;
-gap:14px;
-
-color:#e2e8f0;
+/* ===== Form ===== */
+.form-box h2 {
+  margin-bottom: 8px;
+  font-size: 30px;
+  font-weight: 700;
+}
+.form-subtitle {
+  color: var(--text-muted);
+  font-size: 14px;
+  margin-bottom: 28px;
 }
 
-.feature i{
-color:#14b8a6;
-font-size:18px;
+.input-group {
+  margin-bottom: 18px;
+}
+.input-label {
+  display: block;
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--text-secondary);
+  margin-bottom: 8px;
+}
+.input-wrapper {
+  position: relative;
+}
+.input-wrapper i {
+  position: absolute;
+  left: 16px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: var(--text-muted);
+  font-size: 14px;
+  pointer-events: none;
+}
+.input-wrapper input,
+.input-wrapper select {
+  width: 100%;
+  padding: 15px 16px 15px 44px;
+  border: 1px solid var(--glass-border);
+  outline: none;
+  border-radius: 14px;
+  background: var(--glass-input);
+  color: var(--text-primary);
+  font-family: 'Outfit', sans-serif;
+  font-size: 14px;
+  transition: all 0.3s ease;
+}
+.input-wrapper input:focus,
+.input-wrapper select:focus {
+  border-color: rgba(147, 51, 234, 0.4);
+  box-shadow: 0 0 0 3px rgba(147, 51, 234, 0.1);
+  background: rgba(255, 255, 255, 0.09);
+}
+.input-wrapper input::placeholder {
+  color: var(--text-muted);
+}
+select option {
+  background: var(--bg-tertiary);
+  color: var(--text-primary);
 }
 
-.right{
-padding:50px;
-background:rgba(255,255,255,0.04);
+/* Remember checkbox */
+.remember {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 24px;
+  color: var(--text-secondary);
+  font-size: 14px;
+  cursor: pointer;
+}
+.remember input[type="checkbox"] {
+  width: 18px;
+  height: 18px;
+  accent-color: var(--accent-purple);
+  cursor: pointer;
 }
 
-.form-box h2{
-margin-bottom:25px;
-font-size:34px;
+/* Submit Button */
+.btn {
+  width: 100%;
+  padding: 16px;
+  border: none;
+  border-radius: 16px;
+  background: linear-gradient(135deg, var(--accent-purple), var(--accent-teal));
+  color: white;
+  font-family: 'Outfit', sans-serif;
+  font-size: 15px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  position: relative;
+  overflow: hidden;
+}
+.btn::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(135deg, rgba(255,255,255,0.15), transparent);
+  opacity: 0;
+  transition: opacity 0.3s;
+}
+.btn:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 12px 30px rgba(147, 51, 234, 0.35);
+}
+.btn:hover::before {
+  opacity: 1;
+}
+.btn:active {
+  transform: translateY(-1px);
 }
 
-.input-box{
-margin-bottom:18px;
+/* Switch */
+.switch {
+  margin-top: 24px;
+  text-align: center;
+  color: var(--text-muted);
+  font-size: 14px;
+}
+.switch span {
+  color: var(--accent-teal);
+  cursor: pointer;
+  font-weight: 600;
+  transition: color 0.3s;
+}
+.switch span:hover {
+  color: var(--accent-purple);
 }
 
-.input-box input,
-.input-box select{
-
-width:100%;
-
-padding:16px;
-
-border:none;
-
-outline:none;
-
-border-radius:16px;
-
-background:rgba(255,255,255,0.08);
-
-color:white;
+/* Divider */
+.divider {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin: 24px 0;
+  color: var(--text-muted);
+  font-size: 13px;
+}
+.divider::before,
+.divider::after {
+  content: '';
+  flex: 1;
+  height: 1px;
+  background: var(--glass-border);
 }
 
-select option{
-background:#111827;
+/* Form animation */
+.form-box {
+  animation: slideUp 0.5s ease;
 }
 
-.remember{
-display:flex;
-align-items:center;
-gap:10px;
-
-margin-bottom:20px;
-
-color:#cbd5e1;
+@keyframes slideUp {
+  from { opacity: 0; transform: translateY(16px); }
+  to { opacity: 1; transform: translateY(0); }
 }
 
-.btn{
-width:100%;
-
-padding:16px;
-
-border:none;
-
-border-radius:18px;
-
-background:
-linear-gradient(135deg,#9333ea,#14b8a6);
-
-color:white;
-
-font-size:16px;
-
-font-weight:600;
-
-cursor:pointer;
-
-transition:0.4s;
+/* Hidden */
+.hidden {
+  display: none !important;
 }
 
-.btn:hover{
-transform:translateY(-4px);
-}
-
-.switch{
-margin-top:20px;
-text-align:center;
-color:#cbd5e1;
-}
-
-.switch span{
-color:#14b8a6;
-cursor:pointer;
-font-weight:600;
-}
-
-.hidden{
-display:none;
-}
-
-@media(max-width:900px){
-
-.container{
-grid-template-columns:1fr;
-}
-
-.left{
-display:none;
-}
-
+/* ===== Responsive ===== */
+@media (max-width: 900px) {
+  .container {
+    grid-template-columns: 1fr;
+    max-width: 500px;
+  }
+  .left {
+    display: none;
+  }
+  .right {
+    border-left: none;
+    padding: 40px 30px;
+  }
 }
 
 </style>
@@ -235,193 +407,238 @@ display:none;
 
 <body>
 
+<!-- Background -->
 <div class="orb orb1"></div>
 <div class="orb orb2"></div>
+<div class="orb orb3"></div>
+<div class="particles"></div>
 
 <div class="container">
 
-<div class="left">
+  <!-- Left Panel -->
+  <div class="left">
+    <div class="left-content">
 
-<h1>
-Become a <span>Volunteer</span>
-</h1>
+      <h1>
+        Become a<br><span>Volunteer</span>
+      </h1>
 
-<p>
-Join the emergency response network and help people during critical situations.
-</p>
+      <p>
+        Join the emergency response network and help people during critical situations. Make a real difference in your community.
+      </p>
 
-<div class="features">
+      <div class="features">
 
-<div class="feature">
-<i class="fa-solid fa-location-dot"></i>
-Nearby Emergency Alerts
-</div>
+        <div class="feature">
+          <div class="feature-icon">
+            <i class="fa-solid fa-location-dot"></i>
+          </div>
+          Nearby Emergency Alerts
+        </div>
 
-<div class="feature">
-<i class="fa-solid fa-user-doctor"></i>
-Medical & Rescue Support
-</div>
+        <div class="feature">
+          <div class="feature-icon">
+            <i class="fa-solid fa-user-doctor"></i>
+          </div>
+          Medical & Rescue Support
+        </div>
 
-<div class="feature">
-<i class="fa-solid fa-bell"></i>
-Real-time Notifications
-</div>
+        <div class="feature">
+          <div class="feature-icon">
+            <i class="fa-solid fa-bell"></i>
+          </div>
+          Real-time Notifications
+        </div>
 
-</div>
+        <div class="feature">
+          <div class="feature-icon">
+            <i class="fa-solid fa-chart-line"></i>
+          </div>
+          Analytics Dashboard
+        </div>
 
-</div>
+      </div>
 
-<div class="right">
+    </div>
+  </div>
 
-<div id="loginBox" class="form-box">
+  <!-- Right Panel -->
+  <div class="right">
 
-<h2>Volunteer Login</h2>
+    <!-- LOGIN FORM -->
+    <div id="loginBox" class="form-box">
 
-<form action="/login_volunteer" method="POST">
+      <h2>Welcome Back</h2>
+      <p class="form-subtitle">Sign in to your volunteer dashboard</p>
 
-<div class="input-box">
-<input type="text"
-name="name"
-placeholder="Enter Name"
-required>
-</div>
+      <form action="/login_volunteer" method="POST">
 
-<label class="remember">
-<input type="checkbox" name="remember">
-Remember Me
-</label>
+        <div class="input-group">
+          <label class="input-label">Full Name</label>
+          <div class="input-wrapper">
+            <i class="fa-solid fa-user"></i>
+            <input type="text"
+              name="name"
+              placeholder="Enter your name"
+              required
+              id="loginName"
+              autocomplete="name">
+          </div>
+        </div>
 
-<button class="btn" type="submit">
-Login
-</button>
+        <label class="remember">
+          <input type="checkbox" name="remember">
+          Remember me for 7 days
+        </label>
 
-</form>
+        <button class="btn" type="submit" id="loginBtn">
+          <i class="fa-solid fa-right-to-bracket"></i>
+          Sign In
+        </button>
 
-<div class="switch">
-New Volunteer?
-<span onclick="showRegister()">
-Register
-</span>
-</div>
+      </form>
 
-</div>
+      <div class="divider">or</div>
 
-<div id="registerBox"
-class="form-box hidden">
+      <div class="switch">
+        New to HelpHive?
+        <span onclick="showRegister()">
+          Create an account
+        </span>
+      </div>
 
-<h2>Volunteer Register</h2>
+    </div>
 
-<form action="/register_volunteer" method="POST">
+    <!-- REGISTER FORM -->
+    <div id="registerBox" class="form-box hidden">
 
-<div class="input-box">
-<input type="text"
-name="name"
-placeholder="Full Name"
-required>
-</div>
+      <h2>Join HelpHive</h2>
+      <p class="form-subtitle">Register as an emergency response volunteer</p>
 
-<div class="input-box">
-<input type="text"
-name="occupation"
-placeholder="Occupation"
-required>
-</div>
+      <form action="/register_volunteer" method="POST">
 
-<div class="input-box">
-<input type="tel"
-name="phone"
-placeholder="Phone Number"
-required>
-</div>
+        <div class="input-group">
+          <label class="input-label">Full Name</label>
+          <div class="input-wrapper">
+            <i class="fa-solid fa-user"></i>
+            <input type="text"
+              name="name"
+              placeholder="Your full name"
+              required
+              autocomplete="name">
+          </div>
+        </div>
 
-<div class="input-box">
+        <div class="input-group">
+          <label class="input-label">Occupation</label>
+          <div class="input-wrapper">
+            <i class="fa-solid fa-briefcase"></i>
+            <input type="text"
+              name="occupation"
+              placeholder="Your occupation"
+              required>
+          </div>
+        </div>
 
-<select name="category">
+        <div class="input-group">
+          <label class="input-label">Phone Number</label>
+          <div class="input-wrapper">
+            <i class="fa-solid fa-phone"></i>
+            <input type="tel"
+              name="phone"
+              placeholder="Your phone number"
+              required
+              autocomplete="tel">
+          </div>
+        </div>
 
-<option>Select Category</option>
+        <div class="input-group">
+          <label class="input-label">Category</label>
+          <div class="input-wrapper">
+            <i class="fa-solid fa-tag"></i>
+            <select name="category" required>
+              <option value="">Select Category</option>
+              <option value="Doctor">🏥 Doctor</option>
+              <option value="Nurse">💉 Nurse</option>
+              <option value="Blood Donor">🩸 Blood Donor</option>
+              <option value="Fire Rescue">🔥 Fire Rescue</option>
+              <option value="Ambulance Driver">🚑 Ambulance Driver</option>
+              <option value="Disaster Response">🌪 Disaster Response</option>
+              <option value="NGO Support">🤝 NGO Support</option>
+            </select>
+          </div>
+        </div>
 
-<option>Doctor</option>
-<option>Nurse</option>
-<option>Blood Donor</option>
-<option>Fire Rescue</option>
-<option>Ambulance Driver</option>
-<option>Disaster Response</option>
-<option>NGO Support</option>
+        <div class="input-group">
+          <label class="input-label">Availability</label>
+          <div class="input-wrapper">
+            <i class="fa-solid fa-clock"></i>
+            <select name="availability">
+              <option value="Available">🟢 Available</option>
+              <option value="Busy">🔴 Busy</option>
+            </select>
+          </div>
+        </div>
 
-</select>
+        <input type="hidden" name="latitude" id="latitude">
+        <input type="hidden" name="longitude" id="longitude">
 
-</div>
+        <button class="btn" type="submit" id="registerBtn">
+          <i class="fa-solid fa-user-plus"></i>
+          Create Account
+        </button>
 
-<div class="input-box">
+      </form>
 
-<select name="availability">
+      <div class="divider">or</div>
 
-<option>Available</option>
-<option>Busy</option>
+      <div class="switch">
+        Already registered?
+        <span onclick="showLogin()">
+          Sign in
+        </span>
+      </div>
 
-</select>
+    </div>
 
-</div>
-
-<input type="hidden" name="latitude" id="latitude">
-<input type="hidden" name="longitude" id="longitude">
-
-<button class="btn" type="submit">
-Register
-</button>
-
-</form>
-
-<div class="switch">
-Already Registered?
-<span onclick="showLogin()">
-Login
-</span>
-</div>
-
-</div>
-
-</div>
+  </div>
 
 </div>
 
 <script>
 
-function showRegister(){
-
-document.getElementById("loginBox")
-.classList.add("hidden");
-
-document.getElementById("registerBox")
-.classList.remove("hidden");
+function showRegister() {
+  const login = document.getElementById("loginBox");
+  const register = document.getElementById("registerBox");
+  login.classList.add("hidden");
+  register.classList.remove("hidden");
+  register.style.animation = 'none';
+  register.offsetHeight; // trigger reflow
+  register.style.animation = 'slideUp 0.5s ease';
 }
 
-function showLogin(){
-
-document.getElementById("registerBox")
-.classList.add("hidden");
-
-document.getElementById("loginBox")
-.classList.remove("hidden");
+function showLogin() {
+  const login = document.getElementById("loginBox");
+  const register = document.getElementById("registerBox");
+  register.classList.add("hidden");
+  login.classList.remove("hidden");
+  login.style.animation = 'none';
+  login.offsetHeight;
+  login.style.animation = 'slideUp 0.5s ease';
 }
 
-navigator.geolocation.getCurrentPosition(
-
-(position)=>{
-
-document.getElementById("latitude").value =
-position.coords.latitude;
-
-document.getElementById("longitude").value =
-position.coords.longitude;
-
-},
-
-(error)=>{
-console.log(error);
+// Geolocation
+if (navigator.geolocation) {
+  navigator.geolocation.getCurrentPosition(
+    (position) => {
+      document.getElementById("latitude").value = position.coords.latitude;
+      document.getElementById("longitude").value = position.coords.longitude;
+    },
+    (error) => {
+      console.log("Geolocation error:", error);
+    }
+  );
 }
-
-);
 
 </script>
 

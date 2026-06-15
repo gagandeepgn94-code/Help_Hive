@@ -4,342 +4,509 @@
 <head>
 
 <meta charset="UTF-8">
-<meta name="viewport"
-content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="Request emergency help from nearby HelpHive volunteers — doctors, nurses, blood donors, and rescue teams.">
 
-<title>Emergency Help Request</title>
+<title>Request Help — HelpHive</title>
 
 <link rel="stylesheet"
-href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+  href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 
 <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap"
-rel="stylesheet">
-
-<script>
-
-async function getAddress(lat, lon) {
-
-    try {
-
-        const response = await fetch(
-            `https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lon}`
-        );
-
-        const data = await response.json();
-
-        document.getElementById("address").value =
-            data.display_name;
-
-        document.getElementById("addressDisplay").value =
-            data.display_name;
-
-    }
-
-    catch(error){
-
-        console.log(error);
-
-    }
-
-}
-
-navigator.geolocation.getCurrentPosition(
-
-function(position){
-
-    const lat = position.coords.latitude;
-    const lon = position.coords.longitude;
-
-    document.getElementById("latitude").value = lat;
-    document.getElementById("longitude").value = lon;
-
-    getAddress(lat, lon);
-
-},
-
-function(error){
-
-    alert("Location access is required.");
-
-}
-
-);
-
-</script>
+  rel="stylesheet">
 
 <style>
 
-*{
-margin:0;
-padding:0;
-box-sizing:border-box;
+/* ===== Variables ===== */
+:root {
+  --bg-primary: #020617;
+  --bg-secondary: #0f172a;
+  --bg-tertiary: #111827;
+  --glass: rgba(255, 255, 255, 0.05);
+  --glass-border: rgba(255, 255, 255, 0.08);
+  --glass-input: rgba(255, 255, 255, 0.07);
+  --accent-purple: #9333ea;
+  --accent-teal: #14b8a6;
+  --accent-orange: #f97316;
+  --accent-red: #ef4444;
+  --accent-green: #22c55e;
+  --accent-blue: #3b82f6;
+  --text-primary: #f1f5f9;
+  --text-secondary: #94a3b8;
+  --text-muted: #64748b;
 }
 
-body{
-
-font-family:'Outfit',sans-serif;
-
-background:
-linear-gradient(135deg,#020617,#0f172a,#111827);
-
-min-height:100vh;
-
-display:flex;
-justify-content:center;
-align-items:center;
-
-color:white;
-
-overflow-x:hidden;
-
-padding:40px 20px;
+/* ===== Reset ===== */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
 }
 
-.bg{
-position:absolute;
-width:500px;
-height:500px;
-border-radius:50%;
-filter:blur(140px);
-opacity:0.4;
+body {
+  font-family: 'Outfit', sans-serif;
+  background: linear-gradient(135deg, var(--bg-primary), var(--bg-secondary), var(--bg-tertiary));
+  min-height: 100vh;
+  color: var(--text-primary);
+  overflow-x: hidden;
 }
 
-.bg1{
-background:#9333ea;
-top:-100px;
-left:-100px;
+/* ===== Scrollbar ===== */
+::-webkit-scrollbar { width: 6px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.1); border-radius: 99px; }
+
+/* ===== Background ===== */
+.orb {
+  position: fixed;
+  border-radius: 50%;
+  filter: blur(140px);
+  z-index: 0;
+  pointer-events: none;
+}
+.orb1 {
+  width: 450px;
+  height: 450px;
+  background: var(--accent-purple);
+  top: -120px;
+  left: -120px;
+  opacity: 0.25;
+  animation: floatOrb 12s ease-in-out infinite;
+}
+.orb2 {
+  width: 400px;
+  height: 400px;
+  background: var(--accent-teal);
+  bottom: -120px;
+  right: -120px;
+  opacity: 0.2;
+  animation: floatOrb 14s ease-in-out infinite reverse;
+}
+.orb3 {
+  width: 300px;
+  height: 300px;
+  background: var(--accent-orange);
+  top: 50%;
+  right: 20%;
+  opacity: 0.08;
 }
 
-.bg2{
-background:#14b8a6;
-bottom:-100px;
-right:-100px;
+@keyframes floatOrb {
+  0%, 100% { transform: translateY(0) scale(1); }
+  50% { transform: translateY(-30px) scale(1.05); }
 }
 
-.container{
-
-width:100%;
-max-width:650px;
-
-background:rgba(255,255,255,0.08);
-
-border:1px solid rgba(255,255,255,0.1);
-
-backdrop-filter:blur(24px);
-
-padding:45px;
-
-border-radius:32px;
-
-box-shadow:
-0 20px 50px rgba(0,0,0,0.4);
-
-z-index:10;
-
-position:relative;
+.particles {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  background-image: radial-gradient(rgba(255,255,255,0.5) 1px, transparent 1px);
+  background-size: 50px 50px;
+  opacity: 0.04;
 }
 
-form{
-width:100%;
+/* ===== Navbar ===== */
+.navbar {
+  width: 100%;
+  position: fixed;
+  top: 0;
+  z-index: 100;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 18px 6%;
+  backdrop-filter: blur(24px);
+  background: rgba(15, 23, 42, 0.6);
+  border-bottom: 1px solid var(--glass-border);
+}
+.logo {
+  font-size: 28px;
+  font-weight: 700;
+  text-decoration: none;
+  color: var(--text-primary);
+}
+.logo span {
+  background: linear-gradient(135deg, var(--accent-teal), var(--accent-purple));
+  background-clip: text;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+.nav-links {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.nav-link {
+  text-decoration: none;
+  color: var(--text-secondary);
+  font-size: 14px;
+  font-weight: 500;
+  padding: 10px 18px;
+  border-radius: 12px;
+  transition: all 0.3s ease;
+}
+.nav-link:hover {
+  background: rgba(255,255,255,0.06);
+  color: var(--text-primary);
+}
+.nav-link.active {
+  background: linear-gradient(135deg, var(--accent-purple), var(--accent-teal));
+  color: white;
 }
 
-.title{
-text-align:center;
-margin-bottom:35px;
+/* ===== Page Layout ===== */
+.page-content {
+  position: relative;
+  z-index: 1;
+  padding: 110px 6% 60px;
+  display: flex;
+  justify-content: center;
 }
 
-.title h1{
-font-size:42px;
-margin-bottom:10px;
+.form-layout {
+  display: grid;
+  grid-template-columns: 1fr 380px;
+  gap: 32px;
+  width: 100%;
+  max-width: 1000px;
+  animation: fadeIn 0.6s ease;
 }
 
-.title p{
-color:#d1d5db;
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
 }
 
-.input-box{
-margin-bottom:20px;
+/* ===== Form Card ===== */
+.form-card {
+  background: rgba(15, 23, 42, 0.7);
+  border: 1px solid var(--glass-border);
+  backdrop-filter: blur(30px);
+  border-radius: 28px;
+  padding: 44px;
+  box-shadow: 0 24px 64px rgba(0, 0, 0, 0.4);
+}
+.form-header {
+  margin-bottom: 32px;
+}
+.form-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 16px;
+  border-radius: 99px;
+  background: rgba(239, 68, 68, 0.12);
+  color: var(--accent-red);
+  font-size: 13px;
+  font-weight: 600;
+  margin-bottom: 16px;
+}
+.form-badge-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--accent-red);
+  animation: pulseDot 1.5s infinite;
+}
+@keyframes pulseDot {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.3; }
+}
+.form-header h1 {
+  font-size: 32px;
+  font-weight: 700;
+  margin-bottom: 8px;
+}
+.form-header p {
+  color: var(--text-muted);
+  font-size: 15px;
 }
 
-.input-box label{
-display:block;
-margin-bottom:8px;
-font-size:14px;
-color:#d1d5db;
+/* Input groups */
+.input-group {
+  margin-bottom: 20px;
+}
+.input-label {
+  display: block;
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--text-secondary);
+  margin-bottom: 8px;
+}
+.input-wrapper {
+  position: relative;
+}
+.input-wrapper i {
+  position: absolute;
+  left: 16px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: var(--text-muted);
+  font-size: 14px;
+  pointer-events: none;
+}
+.input-wrapper input,
+.input-wrapper textarea,
+.input-wrapper select {
+  width: 100%;
+  padding: 15px 16px 15px 44px;
+  border: 1px solid var(--glass-border);
+  outline: none;
+  border-radius: 14px;
+  background: var(--glass-input);
+  color: var(--text-primary);
+  font-family: 'Outfit', sans-serif;
+  font-size: 14px;
+  transition: all 0.3s ease;
+}
+.input-wrapper input:focus,
+.input-wrapper textarea:focus,
+.input-wrapper select:focus {
+  border-color: rgba(147, 51, 234, 0.4);
+  box-shadow: 0 0 0 3px rgba(147, 51, 234, 0.1);
+  background: rgba(255, 255, 255, 0.09);
+}
+.input-wrapper input::placeholder,
+.input-wrapper textarea::placeholder {
+  color: var(--text-muted);
+}
+.input-wrapper textarea {
+  padding-top: 14px;
+  resize: none;
+  height: 110px;
+  line-height: 1.6;
+}
+/* Fix icon alignment for textarea */
+.textarea-group .input-wrapper i {
+  top: 18px;
+  transform: none;
+}
+select option {
+  background: var(--bg-tertiary);
+  color: var(--text-primary);
 }
 
-.input-box input,
-.input-box textarea,
-.input-box select{
-
-width:100%;
-
-padding:18px;
-
-border:none;
-
-outline:none;
-
-border-radius:18px;
-
-background:rgba(255,255,255,0.07);
-
-color:white;
-
-font-size:15px;
-
-margin-top:6px;
-
-box-shadow:
-0 0 20px rgba(20,184,166,0.12);
+/* Submit Button */
+.submit-btn {
+  width: 100%;
+  padding: 17px;
+  border: none;
+  border-radius: 16px;
+  background: linear-gradient(135deg, var(--accent-orange), var(--accent-purple));
+  color: white;
+  font-family: 'Outfit', sans-serif;
+  font-size: 16px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 10px;
+  margin-top: 8px;
+  position: relative;
+  overflow: hidden;
+}
+.submit-btn::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(135deg, rgba(255,255,255,0.15), transparent);
+  opacity: 0;
+  transition: opacity 0.3s;
+}
+.submit-btn:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 16px 40px rgba(147, 51, 234, 0.35);
+}
+.submit-btn:hover::before {
+  opacity: 1;
+}
+.submit-btn:active {
+  transform: translateY(-1px);
 }
 
-textarea{
-resize:none;
-height:120px;
+/* ===== Side Panel ===== */
+.side-panel {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
 }
 
-select option{
-background:#111827;
+/* Location Card */
+.location-card {
+  background: rgba(15, 23, 42, 0.7);
+  border: 1px solid var(--glass-border);
+  backdrop-filter: blur(30px);
+  border-radius: 24px;
+  padding: 28px;
+  box-shadow: 0 16px 40px rgba(0, 0, 0, 0.3);
+}
+.location-header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 18px;
+}
+.location-icon {
+  width: 42px;
+  height: 42px;
+  border-radius: 12px;
+  background: rgba(139, 92, 246, 0.15);
+  color: #8b5cf6;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 18px;
+}
+.location-header-text h3 {
+  font-size: 16px;
+  font-weight: 600;
+}
+.location-header-text p {
+  font-size: 12px;
+  color: var(--text-muted);
+}
+.location-address {
+  color: var(--text-secondary);
+  line-height: 1.7;
+  font-size: 14px;
+  margin-bottom: 16px;
+  word-break: break-word;
+  min-height: 48px;
+  padding: 14px;
+  background: rgba(255, 255, 255, 0.03);
+  border-radius: 12px;
+  border: 1px solid rgba(255, 255, 255, 0.04);
+}
+.location-status {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: rgba(34, 197, 94, 0.12);
+  color: var(--accent-green);
+  padding: 8px 16px;
+  border-radius: 99px;
+  font-size: 13px;
+  font-weight: 600;
+  margin-bottom: 18px;
+}
+.location-status .dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--accent-green);
+  animation: pulseDot 2s infinite;
+}
+.refresh-btn {
+  width: 100%;
+  padding: 14px;
+  border: 1px solid var(--glass-border);
+  border-radius: 14px;
+  background: rgba(255, 255, 255, 0.04);
+  color: var(--text-secondary);
+  font-family: 'Outfit', sans-serif;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+.refresh-btn:hover {
+  background: rgba(255, 255, 255, 0.08);
+  color: var(--text-primary);
+  transform: translateY(-2px);
 }
 
-.location-btn{
-
-width:100%;
-
-padding:15px;
-
-border:none;
-
-border-radius:16px;
-
-background:
-linear-gradient(135deg,#14b8a6,#9333ea);
-
-color:white;
-
-font-weight:600;
-
-cursor:pointer;
-
-margin-bottom:20px;
+/* Info Cards */
+.info-card {
+  background: rgba(15, 23, 42, 0.7);
+  border: 1px solid var(--glass-border);
+  backdrop-filter: blur(30px);
+  border-radius: 20px;
+  padding: 24px;
+}
+.info-card h4 {
+  font-size: 15px;
+  font-weight: 600;
+  margin-bottom: 14px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.info-card h4 i {
+  color: var(--accent-teal);
+  font-size: 16px;
+}
+.info-list {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.info-list li {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 13px;
+  color: var(--text-secondary);
+}
+.info-list li i {
+  color: var(--accent-green);
+  font-size: 11px;
+  flex-shrink: 0;
 }
 
-.submit-btn{
-
-width:100%;
-
-padding:18px;
-
-border:none;
-
-border-radius:18px;
-
-background:
-linear-gradient(
-135deg,
-#f97316,
-#9333ea
-);
-
-color:white;
-
-font-size:16px;
-
-font-weight:700;
-
-cursor:pointer;
-
-display:flex;
-justify-content:center;
-align-items:center;
-gap:10px;
-
-transition:0.4s;
+/* Back link */
+.back-link {
+  background: rgba(15, 23, 42, 0.7);
+  border: 1px solid var(--glass-border);
+  border-radius: 16px;
+  padding: 18px;
+  text-align: center;
+}
+.back-link a {
+  text-decoration: none;
+  color: var(--text-secondary);
+  font-size: 14px;
+  font-weight: 500;
+  transition: color 0.3s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+.back-link a:hover {
+  color: var(--accent-teal);
 }
 
-.submit-btn:hover{
-transform:translateY(-5px);
-box-shadow:
-0 15px 30px rgba(147,51,234,0.35);
-}
-@media(max-width:768px){
-
-.container{
-padding:30px 22px;
-}
-
-.title h1{
-font-size:32px;
-}
-
-}
-.location-card{
-
-background:rgba(255,255,255,0.06);
-
-border:1px solid rgba(255,255,255,0.08);
-
-border-radius:24px;
-
-padding:24px;
-
-margin-bottom:25px;
-
-backdrop-filter:blur(20px);
+/* ===== Responsive ===== */
+@media (max-width: 900px) {
+  .form-layout {
+    grid-template-columns: 1fr;
+    max-width: 600px;
+  }
+  .side-panel {
+    order: -1;
+  }
+  .navbar {
+    padding: 14px 5%;
+  }
+  .form-card {
+    padding: 30px 24px;
+  }
 }
 
-.location-title{
-
-display:flex;
-
-align-items:center;
-
-gap:10px;
-
-font-size:18px;
-
-font-weight:700;
-
-margin-bottom:14px;
-
-color:#8b5cf6;
-}
-
-.location-text{
-
-color:#e2e8f0;
-
-line-height:1.7;
-
-font-size:15px;
-
-margin-bottom:15px;
-
-word-break:break-word;
-}
-
-.location-status{
-
-display:inline-flex;
-
-align-items:center;
-
-gap:8px;
-
-background:rgba(34,197,94,0.15);
-
-color:#4ade80;
-
-padding:8px 14px;
-
-border-radius:999px;
-
-font-size:13px;
-
-font-weight:600;
-
-margin-bottom:18px;
+@media (max-width: 600px) {
+  .page-content {
+    padding: 90px 16px 40px;
+  }
+  .form-header h1 {
+    font-size: 26px;
+  }
 }
 
 </style>
@@ -348,342 +515,232 @@ margin-bottom:18px;
 
 <body>
 
-<div class="bg bg1"></div>
-<div class="bg bg2"></div>
+<!-- Background -->
+<div class="orb orb1"></div>
+<div class="orb orb2"></div>
+<div class="orb orb3"></div>
+<div class="particles"></div>
 
-<div class="container">
+<!-- Navbar -->
+<nav class="navbar">
+  <a href="/" class="logo">Help<span>Hive</span></a>
+  <div class="nav-links">
+    <a href="/" class="nav-link">Home</a>
+    <a href="/request-help" class="nav-link active">Request Help</a>
+    <a href="/volunteer_login" class="nav-link">Volunteer</a>
+  </div>
+</nav>
 
-<div class="title">
+<!-- Page Content -->
+<div class="page-content">
 
-<h1>
-Emergency Help Request
-</h1>
+  <div class="form-layout">
 
-<p>
-Request immediate support from nearby volunteers
-</p>
+    <!-- Form Card -->
+    <div class="form-card">
 
-</div>
+      <div class="form-header">
+        <div class="form-badge">
+          <span class="form-badge-dot"></span>
+          Emergency Request
+        </div>
+        <h1>Request Help</h1>
+        <p>Describe your emergency and get immediate support from nearby volunteers</p>
+      </div>
 
-<form action="/request_help" method="POST">
+      <form action="/request_help" method="POST" id="helpForm">
 
-    
-<!-- NAME -->
+        <!-- Name -->
+        <div class="input-group">
+          <label class="input-label">Your Name</label>
+          <div class="input-wrapper">
+            <i class="fa-solid fa-user"></i>
+            <input type="text"
+              name="name"
+              placeholder="Enter your full name"
+              required
+              autocomplete="name">
+          </div>
+        </div>
 
-<div class="input-box">
+        <!-- Category -->
+        <div class="input-group">
+          <label class="input-label">Emergency Category</label>
+          <div class="input-wrapper">
+            <i class="fa-solid fa-tag"></i>
+            <select name="category" required>
+              <option value="">Choose Category</option>
+              <option value="Doctor">🏥 Doctor Assistance</option>
+              <option value="Nurse">💉 Nurse Support</option>
+              <option value="Blood Donor">🩸 Blood Donor Needed</option>
+              <option value="Fire Rescue">🔥 Fire Rescue</option>
+              <option value="Ambulance">🚑 Ambulance Support</option>
+              <option value="NGO Support">🤝 NGO Support</option>
+              <option value="Disaster Response">🌪 Disaster Response</option>
+            </select>
+          </div>
+        </div>
 
-<label>Your Name</label>
+        <!-- Description -->
+        <div class="input-group textarea-group">
+          <label class="input-label">Emergency Description</label>
+          <div class="input-wrapper">
+            <i class="fa-solid fa-pen"></i>
+            <textarea
+              name="help"
+              placeholder="Describe your emergency situation in detail..."
+              required></textarea>
+          </div>
+        </div>
 
-<input
-type="text"
-name="name"
-placeholder="Enter your name"
-required>
+        <!-- Priority -->
+        <div class="input-group">
+          <label class="input-label">Priority Level</label>
+          <div class="input-wrapper">
+            <i class="fa-solid fa-bolt"></i>
+            <select name="priority" required>
+              <option value="High">🔴 High — Life threatening</option>
+              <option value="Medium">🟠 Medium — Urgent</option>
+              <option value="Low">🟢 Low — Non-urgent</option>
+            </select>
+          </div>
+        </div>
 
-</div>
+        <!-- Hidden Location Data -->
+        <input type="hidden" name="latitude" id="latitude">
+        <input type="hidden" name="longitude" id="longitude">
+        <input type="hidden" name="address" id="address">
 
-<!-- CATEGORY -->
+        <!-- Submit -->
+        <button type="submit" class="submit-btn" id="submitBtn">
+          <i class="fa-solid fa-paper-plane"></i>
+          Send Emergency Request
+        </button>
 
-<div class="input-box">
+      </form>
 
-<label>Emergency Category</label>
-
-<select name="category" required>
-
-<option value="">Choose Category</option>
-
-<option value="Doctor">🏥 Doctor Assistance</option>
-
-<option value="Nurse">💉 Nurse Support</option>
-
-<option value="Blood Donor">🩸 Blood Donor Needed</option>
-
-<option value="Fire Rescue">🔥 Fire Rescue</option>
-
-<option value="Ambulance">🚑 Ambulance Support</option>
-
-<option value="NGO Support">🤝 NGO Support</option>
-
-<option value="Disaster Response">🌪 Disaster Response</option>
-
-</select>
-
-</div>
-
-<!-- DESCRIPTION -->
-
-<div class="input-box">
-
-<label>Emergency Description</label>
-
-<textarea
-name="help"
-placeholder="Describe your emergency"
-required></textarea>
-
-</div>
-
-<!-- PRIORITY -->
-
-<div class="input-box">
-
-<label>Priority</label>
-
-<select name="priority">
-
-<option value="High">🔴 High</option>
-
-<option value="Medium">🟠 Medium</option>
-
-<option value="Low">🔵 Low</option>
-
-</select>
-
-</div>
-
-<!-- HIDDEN LOCATION DATA -->
-
-<input type="hidden" name="latitude" id="latitude">
-<input type="hidden" name="longitude" id="longitude">
-<input type="hidden" name="address" id="address">
-
-<!-- LOCATION CARD -->
-
-<div class="location-card">
-
-    <div class="location-title">
-        <i class="fa-solid fa-location-dot"></i>
-        Current Location
     </div>
 
-    <div id="locationText" class="location-text">
-        Detecting your location...
+    <!-- Side Panel -->
+    <div class="side-panel">
+
+      <!-- Location Card -->
+      <div class="location-card">
+        <div class="location-header">
+          <div class="location-icon">
+            <i class="fa-solid fa-location-dot"></i>
+          </div>
+          <div class="location-header-text">
+            <h3>Your Location</h3>
+            <p>Auto-detected via GPS</p>
+          </div>
+        </div>
+
+        <div class="location-address" id="locationText">
+          <i class="fa-solid fa-spinner fa-spin" style="margin-right:8px;"></i>
+          Detecting your location...
+        </div>
+
+        <div class="location-status" id="locationStatus" style="display:none;">
+          <span class="dot"></span>
+          Location Verified
+        </div>
+
+        <button type="button" class="refresh-btn" onclick="getLocation()">
+          <i class="fa-solid fa-crosshairs"></i>
+          Refresh Location
+        </button>
+      </div>
+
+      <!-- Info Card -->
+      <div class="info-card">
+        <h4>
+          <i class="fa-solid fa-shield-halved"></i>
+          How It Works
+        </h4>
+        <ul class="info-list">
+          <li>
+            <i class="fa-solid fa-check"></i>
+            Your request is sent to nearby volunteers
+          </li>
+          <li>
+            <i class="fa-solid fa-check"></i>
+            Matched by category and proximity
+          </li>
+          <li>
+            <i class="fa-solid fa-check"></i>
+            Volunteers respond in real-time
+          </li>
+          <li>
+            <i class="fa-solid fa-check"></i>
+            Your location helps find the closest help
+          </li>
+        </ul>
+      </div>
+
+      <!-- Back link -->
+      <div class="back-link">
+        <a href="/">
+          <i class="fa-solid fa-arrow-left"></i>
+          Back to Home
+        </a>
+      </div>
+
     </div>
 
-    <div class="location-status">
-        <i class="fa-solid fa-circle-check"></i>
-        Verified Location
-    </div>
-
-    <button
-        type="button"
-        class="location-btn"
-        onclick="getLocation()">
-
-        <i class="fa-solid fa-crosshairs"></i>
-        Refresh Location
-
-    </button>
+  </div>
 
 </div>
-
-<!-- SUBMIT BUTTON -->
-
-<button
-type="submit"
-class="submit-btn">
-
-<i class="fa-solid fa-paper-plane"></i>
-
-Send Emergency Request
-
-</button>
-
-<style>
-
-.location-card{
-
-background:rgba(255,255,255,0.06);
-
-border:1px solid rgba(255,255,255,0.08);
-
-border-radius:24px;
-
-padding:24px;
-
-margin-bottom:25px;
-
-backdrop-filter:blur(20px);
-
-}
-
-.location-title{
-
-display:flex;
-
-align-items:center;
-
-gap:10px;
-
-font-size:18px;
-
-font-weight:700;
-
-margin-bottom:14px;
-
-color:#8b5cf6;
-
-}
-
-.location-text{
-
-color:#e2e8f0;
-
-line-height:1.7;
-
-font-size:15px;
-
-margin-bottom:15px;
-
-word-break:break-word;
-
-}
-
-.location-status{
-
-display:inline-flex;
-
-align-items:center;
-
-gap:8px;
-
-background:rgba(34,197,94,0.15);
-
-color:#4ade80;
-
-padding:8px 14px;
-
-border-radius:999px;
-
-font-size:13px;
-
-font-weight:600;
-
-margin-bottom:18px;
-
-}
-
-.location-btn{
-
-width:100%;
-
-padding:15px;
-
-border:none;
-
-border-radius:16px;
-
-background:linear-gradient(
-135deg,
-#14b8a6,
-#9333ea
-);
-
-color:white;
-
-font-weight:600;
-
-cursor:pointer;
-
-transition:.3s;
-
-}
-
-.location-btn:hover{
-
-transform:translateY(-3px);
-
-}
-
-</style>
 
 <script>
 
-async function getLocation(){
+async function getLocation() {
+  const locationText = document.getElementById("locationText");
+  const locationStatus = document.getElementById("locationStatus");
 
-    const locationText =
-    document.getElementById("locationText");
+  locationText.innerHTML = '<i class="fa-solid fa-spinner fa-spin" style="margin-right:8px;"></i> Detecting location...';
+  locationStatus.style.display = 'none';
 
-    locationText.innerHTML =
-    "Detecting location...";
+  if (!navigator.geolocation) {
+    locationText.innerHTML = '<i class="fa-solid fa-exclamation-triangle" style="color:#f59e0b;margin-right:8px;"></i> Geolocation not supported';
+    return;
+  }
 
-    if(!navigator.geolocation){
+  navigator.geolocation.getCurrentPosition(
+    async function(position) {
+      const lat = position.coords.latitude;
+      const lon = position.coords.longitude;
 
-        locationText.innerHTML =
-        "Geolocation not supported";
+      document.getElementById("latitude").value = lat;
+      document.getElementById("longitude").value = lon;
 
-        return;
+      try {
+        const response = await fetch(
+          `https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lon}`
+        );
+        const data = await response.json();
+        const address = data.display_name || "Address not found";
 
+        document.getElementById("address").value = address;
+        locationText.textContent = address;
+        locationStatus.style.display = 'inline-flex';
+      } catch (error) {
+        console.error(error);
+        locationText.innerHTML = `Lat: ${lat.toFixed(4)}, Lon: ${lon.toFixed(4)}`;
+        locationStatus.style.display = 'inline-flex';
+      }
+    },
+    function(error) {
+      locationText.innerHTML = '<i class="fa-solid fa-exclamation-triangle" style="color:#ef4444;margin-right:8px;"></i> Location permission denied';
+      console.error(error);
     }
-
-    navigator.geolocation.getCurrentPosition(
-
-        async function(position){
-
-            const lat =
-            position.coords.latitude;
-
-            const lon =
-            position.coords.longitude;
-
-            document.getElementById("latitude").value =
-            lat;
-
-            document.getElementById("longitude").value =
-            lon;
-
-            try{
-
-                const response =
-                await fetch(
-                `https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lon}`
-                );
-
-                const data =
-                await response.json();
-
-                const address =
-                data.display_name ||
-                "Address not found";
-
-                document.getElementById("address").value =
-                address;
-
-                locationText.innerHTML =
-                address;
-
-            }
-
-            catch(error){
-
-                console.error(error);
-
-                locationText.innerHTML =
-                `Latitude: ${lat}<br>
-                 Longitude: ${lon}`;
-
-            }
-
-        },
-
-        function(error){
-
-            locationText.innerHTML =
-            "Location permission denied";
-
-            console.error(error);
-
-        }
-
-    );
-
+  );
 }
 
-document.addEventListener(
-"DOMContentLoaded",
-getLocation
-);
+// Auto-detect on load
+document.addEventListener("DOMContentLoaded", getLocation);
 
 </script>
+
 </body>
 </html>

@@ -5,223 +5,329 @@
 
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="HelpHive Volunteer Analytics Dashboard - Monitor and respond to emergency requests in real-time.">
 
-<title>Volunteer Dashboard</title>
-
-<link rel="stylesheet"
-href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+<title>Dashboard — HelpHive</title>
 
 <link rel="stylesheet"
-href="https://unpkg.com/leaflet/dist/leaflet.css"/>
+  href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+
+<link rel="stylesheet"
+  href="https://unpkg.com/leaflet/dist/leaflet.css"/>
 
 <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap"
-rel="stylesheet">
+  rel="stylesheet">
 
 <link rel="stylesheet"
-href="{{ url_for('static', filename='css/volunteer.css') }}">
+  href="{{ url_for('static', filename='css/volunteer.css') }}">
 
 </head>
 
 <body>
 
+<!-- Background Orbs -->
 <div class="orb orb1"></div>
 <div class="orb orb2"></div>
+<div class="orb orb3"></div>
 
-<nav class="navbar">
+<!-- Mobile Sidebar Toggle -->
+<button class="sidebar-toggle" id="sidebarToggle" aria-label="Toggle sidebar">
+  <i class="fa-solid fa-bars"></i>
+</button>
 
-<div class="logo">
-Help<span>Hive</span>
+<!-- Sidebar Overlay (mobile) -->
+<div class="sidebar-overlay" id="sidebarOverlay"></div>
+
+<div class="dashboard-layout">
+
+  <!-- ===== Sidebar ===== -->
+  <aside class="sidebar" id="sidebar">
+
+    <div class="sidebar-logo">
+      Help<span>Hive</span>
+    </div>
+
+    <div class="sidebar-profile">
+      <div class="sidebar-avatar">
+        {{ session['volunteer'][0] | upper }}
+      </div>
+      <div class="sidebar-name">{{ session['volunteer'] }}</div>
+      <div class="sidebar-role">
+        <span class="role-dot"></span>
+        {{ current_volunteer.category }}
+      </div>
+    </div>
+
+    <nav class="sidebar-nav">
+
+      <a href="#" class="nav-item active" id="nav-dashboard">
+        <i class="fa-solid fa-chart-pie"></i>
+        Dashboard
+      </a>
+
+      <a href="#requests-section" class="nav-item" id="nav-requests">
+        <i class="fa-solid fa-bell-concierge"></i>
+        Requests
+        {% if notification_count > 0 %}
+        <span class="nav-badge">{{ notification_count }}</span>
+        {% endif %}
+      </a>
+
+      <a href="#map-section" class="nav-item" id="nav-map">
+        <i class="fa-solid fa-map-location-dot"></i>
+        Live Map
+      </a>
+
+      <a href="#charts-section" class="nav-item" id="nav-analytics">
+        <i class="fa-solid fa-chart-bar"></i>
+        Analytics
+      </a>
+
+    </nav>
+
+    <a href="/logout" class="sidebar-logout">
+      <i class="fa-solid fa-right-from-bracket"></i>
+      Logout
+    </a>
+
+  </aside>
+
+  <!-- ===== Main Content ===== -->
+  <main class="main-content">
+
+    <!-- Top Bar -->
+    <div class="top-bar">
+
+      <div class="top-greeting">
+        <h1>Welcome back, {{ session['volunteer'] }} 👋</h1>
+        <p>Here's your emergency response overview</p>
+      </div>
+
+      <div class="top-actions">
+
+        <div class="time-display" id="liveTime">
+          <i class="fa-regular fa-clock"></i>
+          <span>--:--</span>
+        </div>
+
+        <div class="notification-btn">
+          <i class="fa-solid fa-bell"></i>
+          {% if notification_count > 0 %}
+          <span class="notification-badge">{{ notification_count }}</span>
+          {% endif %}
+        </div>
+
+      </div>
+
+    </div>
+
+    <!-- Stat Cards -->
+    <div class="stats-grid">
+
+      <div class="stat-card">
+        <div class="stat-icon alerts">
+          <i class="fa-solid fa-triangle-exclamation"></i>
+        </div>
+        <div class="stat-value" data-count="{{ notification_count }}">0</div>
+        <div class="stat-label">Active Alerts</div>
+      </div>
+
+      <div class="stat-card">
+        <div class="stat-icon accepted">
+          <i class="fa-solid fa-handshake"></i>
+        </div>
+        <div class="stat-value" data-count="{{ requests | selectattr('status','equalto','Accepted') | list | length }}">0</div>
+        <div class="stat-label">Accepted</div>
+      </div>
+
+      <div class="stat-card">
+        <div class="stat-icon completed">
+          <i class="fa-solid fa-circle-check"></i>
+        </div>
+        <div class="stat-value" data-count="{{ requests | selectattr('status','equalto','Completed') | list | length }}">0</div>
+        <div class="stat-label">Completed</div>
+      </div>
+
+      <div class="stat-card">
+        <div class="stat-icon total">
+          <i class="fa-solid fa-layer-group"></i>
+        </div>
+        <div class="stat-value" data-count="{{ requests | length }}">0</div>
+        <div class="stat-label">Total Requests</div>
+      </div>
+
+    </div>
+
+    <!-- Charts -->
+    <div class="charts-grid" id="charts-section">
+
+      <div class="chart-card">
+        <div class="chart-header">
+          <div>
+            <div class="chart-title">Request Status</div>
+            <div class="chart-subtitle">Distribution by current status</div>
+          </div>
+        </div>
+        <div class="chart-container">
+          <canvas id="statusChart"></canvas>
+        </div>
+      </div>
+
+      <div class="chart-card">
+        <div class="chart-header">
+          <div>
+            <div class="chart-title">Priority Levels</div>
+            <div class="chart-subtitle">Breakdown by urgency</div>
+          </div>
+        </div>
+        <div class="chart-container">
+          <canvas id="priorityChart"></canvas>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- Map -->
+    <div class="map-section" id="map-section">
+
+      <div class="map-card">
+
+        <div class="map-header">
+          <div class="map-title">
+            <i class="fa-solid fa-satellite-dish"></i>
+            Live Emergency Map
+          </div>
+          <div class="map-badge">
+            <span class="map-badge-dot"></span>
+            Live
+          </div>
+        </div>
+
+        <div id="map"></div>
+
+      </div>
+
+    </div>
+
+    <!-- Emergency Requests -->
+    <div class="requests-section" id="requests-section">
+
+      <div class="section-header">
+        <h2 class="section-title">Emergency Requests</h2>
+        <span class="request-count">{{ requests | length }} total</span>
+      </div>
+
+      {% if requests | length > 0 %}
+
+      <div class="requests-grid">
+
+        {% for req in requests %}
+
+        <div class="request-card
+          {% if req.priority == 'High' %} high-priority
+          {% elif req.priority == 'Medium' %} medium-priority
+          {% else %} low-priority
+          {% endif %}
+        ">
+
+          <div class="card-top">
+            <div class="card-category">{{ req.category }}</div>
+            <div class="card-status {{ req.status }}">{{ req.status }}</div>
+          </div>
+
+          <div class="card-priority {{ req.priority }}">
+            <i class="fa-solid fa-bolt"></i>
+            {{ req.priority }} Priority
+          </div>
+
+          <div class="card-details">
+
+            <div class="card-detail">
+              <i class="fa-solid fa-user"></i>
+              {{ req.name }}
+            </div>
+
+            <div class="card-detail">
+              <i class="fa-solid fa-location-dot"></i>
+              {{ req.address }}
+            </div>
+
+            <div class="card-detail">
+              <i class="fa-solid fa-route"></i>
+              {{ req.distance }} KM Away
+            </div>
+
+            <div class="card-detail">
+              <i class="fa-solid fa-message"></i>
+              {{ req.help }}
+            </div>
+
+            <div class="card-detail">
+              <i class="fa-regular fa-clock"></i>
+              {{ req.time }}
+            </div>
+
+          </div>
+
+          <div class="card-actions">
+            <a href="/accept/{{ req.request_id }}" class="btn-accept">
+              <i class="fa-solid fa-check"></i> Accept
+            </a>
+            <a href="/complete/{{ req.request_id }}" class="btn-complete">
+              <i class="fa-solid fa-flag-checkered"></i> Complete
+            </a>
+            <a href="/delete/{{ req.request_id }}" class="btn-delete">
+              <i class="fa-solid fa-trash"></i> Delete
+            </a>
+          </div>
+
+        </div>
+
+        {% endfor %}
+
+      </div>
+
+      {% else %}
+
+      <div class="empty-state">
+        <i class="fa-solid fa-inbox"></i>
+        <p>No emergency requests nearby right now</p>
+      </div>
+
+      {% endif %}
+
+    </div>
+
+  </main>
+
 </div>
 
-<div class="nav-right">
-
-<div class="notify">
-
-<i class="fa-solid fa-bell"></i>
-
-<span>
-{{ notification_count }}
-</span>
-
-</div>
-
-<div class="profile-mini">
-
-👤 {{ session['volunteer'] }}
-
-</div>
-
-<a href="/logout" class="logout-btn">
-Logout
-</a>
-
-</div>
-
-</nav>
-
-<div class="container">
-
-<div class="hero">
-
-<div>
-
-<h1>
-Welcome, {{ session['volunteer'] }}
-</h1>
-
-<p>
-Emergency Response Dashboard
-</p>
-
-</div>
-
-<div class="availability">
-
-🟢 {{ current_volunteer.category }}
-
-</div>
-
-</div>
-
-<div class="stats">
-
-<div class="stat-card">
-<h2>{{ notification_count }}</h2>
-<p>Active Alerts</p>
-</div>
-
-<div class="stat-card">
-<h2>
-{{ requests
-| selectattr('status','equalto','Accepted')
-| list
-| length }}
-</h2>
-<p>Accepted</p>
-</div>
-
-<div class="stat-card">
-<h2>
-{{ requests
-| selectattr('status','equalto','Completed')
-| list
-| length }}
-</h2>
-<p>Completed</p>
-</div>
-
-<div class="stat-card">
-<h2>{{ requests|length }}</h2>
-<p>Total Requests</p>
-</div>
-
-</div>
-
-<div class="map-card">
-
-<h2>🗺 Live Emergency Map</h2>
-
-<div id="map"></div>
-
-</div>
-
-<h2 class="section-title">
-
-Emergency Requests
-
-</h2>
-
-<div class="requests">
-
-{% for req in requests %}
-
-<div class="request-card
-{% if req.priority == 'High' %}
-high-priority
-{% elif req.priority == 'Medium' %}
-medium-priority
-{% else %}
-low-priority
-{% endif %}
-">
-
-<div class="card-header">
-
-<h3>{{ req.category }}</h3>
-
-<div class="status {{ req.status }}">
-{{ req.status }}
-</div>
-
-</div>
-
-<p>👤 {{ req.name }}</p>
-
-<p>📍 {{ req.address }}</p>
-
-<p>📏 {{ req.distance }} KM Away</p>
-
-<p>📝 {{ req.help }}</p>
-
-<p>⚡ Priority: {{ req.priority }}</p>
-
-<p>🕒 {{ req.time }}</p>
-
-<div class="actions">
-
-<a
-href="/accept/{{ req.request_id }}"
-class="accept">
-Accept
-</a>
-
-<a
-href="/complete/{{ req.request_id }}"
-class="complete">
-Complete
-</a>
-
-<a
-href="/delete/{{ req.request_id }}"
-class="delete">
-Delete
-</a>
-
-</div>
-
-</div>
-
-{% endfor %}
-
-</div>
-
-</div>
-
+<!-- Scripts -->
 <script src="https://cdn.socket.io/4.7.5/socket.io.min.js"></script>
-
 <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.4/dist/chart.umd.min.js"></script>
+
+<!-- Data (parsed by JS, not executed as script) -->
+<script id="volunteerData" type="application/json">
+{
+  "lat": {{ volunteer_lat }},
+  "lon": {{ volunteer_lon }}
+}
+</script>
+<script id="requestData" type="application/json">{{ request_data_json | safe }}</script>
+<script id="statusData" type="application/json">{{ status_json | safe }}</script>
+<script id="priorityData" type="application/json">{{ priority_json | safe }}</script>
+<script id="categoryData" type="application/json">{{ category_json | safe }}</script>
 
 <script>
-
-const volunteerLat = {{ volunteer_lat }};
-const volunteerLon = {{ volunteer_lon }};
-
-const requestData = [
-
-{% for req in requests %}
-
-{
-lat: {{ req.latitude }},
-lon: {{ req.longitude }},
-category: "{{ req.category }}",
-address: "{{ req.address }}",
-distance: "{{ req.distance }}"
-},
-
-{% endfor %}
-
-];
-
+// Parse embedded JSON data
+var _vd = JSON.parse(document.getElementById("volunteerData").textContent);
+var volunteerLat = _vd.lat;
+var volunteerLon = _vd.lon;
+var requestData = JSON.parse(document.getElementById("requestData").textContent);
+var statusCounts = JSON.parse(document.getElementById("statusData").textContent);
+var priorityCounts = JSON.parse(document.getElementById("priorityData").textContent);
+var categoryCounts = JSON.parse(document.getElementById("categoryData").textContent);
 </script>
 
 <script src="{{ url_for('static', filename='js/volunteer.js') }}"></script>
