@@ -47,8 +47,10 @@ body {
   justify-content: center;
   align-items: center;
   background: linear-gradient(135deg, var(--bg-primary), var(--bg-tertiary), var(--bg-secondary));
-  overflow: hidden;
+  overflow-x: hidden;
+  overflow-y: auto;
   color: var(--text-primary);
+  padding: 30px 0;
 }
 
 /* ===== Background ===== */
@@ -486,6 +488,19 @@ select option {
           </div>
         </div>
 
+        <div class="input-group">
+          <label class="input-label">Password</label>
+          <div class="input-wrapper">
+            <i class="fa-solid fa-lock"></i>
+            <input type="password"
+              name="password"
+              placeholder="Enter your password"
+              required
+              id="loginPassword"
+              autocomplete="current-password">
+          </div>
+        </div>
+
         <label class="remember">
           <input type="checkbox" name="remember">
           Remember me for 7 days
@@ -515,7 +530,7 @@ select option {
       <h2>Join HelpHive</h2>
       <p class="form-subtitle">Register as an emergency response volunteer</p>
 
-      <form action="/register_volunteer" method="POST">
+      <form action="/register_volunteer" method="POST" id="registerForm">
 
         <div class="input-group">
           <label class="input-label">Full Name</label>
@@ -530,13 +545,29 @@ select option {
         </div>
 
         <div class="input-group">
-          <label class="input-label">Occupation</label>
+          <label class="input-label">Password</label>
           <div class="input-wrapper">
-            <i class="fa-solid fa-briefcase"></i>
-            <input type="text"
-              name="occupation"
-              placeholder="Your occupation"
-              required>
+            <i class="fa-solid fa-lock"></i>
+            <input type="password"
+              name="password"
+              id="regPassword"
+              placeholder="Create a password"
+              required
+              minlength="6"
+              autocomplete="new-password">
+          </div>
+        </div>
+
+        <div class="input-group">
+          <label class="input-label">Confirm Password</label>
+          <div class="input-wrapper">
+            <i class="fa-solid fa-lock"></i>
+            <input type="password"
+              id="regConfirmPassword"
+              placeholder="Confirm your password"
+              required
+              minlength="6"
+              autocomplete="new-password">
           </div>
         </div>
 
@@ -551,6 +582,8 @@ select option {
               autocomplete="tel">
           </div>
         </div>
+
+
 
         <div class="input-group">
           <label class="input-label">Category</label>
@@ -638,6 +671,19 @@ if (navigator.geolocation) {
       console.log("Geolocation error:", error);
     }
   );
+}
+
+// Password confirmation validation
+const registerForm = document.getElementById('registerForm');
+if (registerForm) {
+  registerForm.addEventListener('submit', function(e) {
+    const pw = document.getElementById('regPassword').value;
+    const cpw = document.getElementById('regConfirmPassword').value;
+    if (pw !== cpw) {
+      e.preventDefault();
+      alert('Passwords do not match!');
+    }
+  });
 }
 
 </script>

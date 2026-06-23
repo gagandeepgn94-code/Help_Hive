@@ -1,0 +1,516 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="HelpHive Admin Analytics Dashboard — Global metrics across all volunteers and emergency requests.">
+
+<title>Analytics — HelpHive Admin</title>
+
+<link rel="stylesheet"
+  href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap"
+  rel="stylesheet">
+
+<link rel="stylesheet"
+  href="{{ url_for('static', filename='css/admin_analytics.css') }}">
+
+</head>
+
+<body>
+
+<!-- Background Orbs -->
+<div class="orb orb1"></div>
+<div class="orb orb2"></div>
+<div class="orb orb3"></div>
+
+<!-- Navbar -->
+<nav class="navbar">
+  <a href="/" class="logo">Help<span>Hive</span></a>
+  <div class="nav-links">
+    <a href="/" class="nav-link">Home</a>
+    <a href="/request-help" class="nav-link">Request Help</a>
+    <a href="/volunteer_login" class="nav-link">Volunteer</a>
+    <a href="/admin/analytics" class="nav-link active">Analytics</a>
+  </div>
+</nav>
+
+<!-- Page Content -->
+<div class="page-content">
+
+  <!-- Page Header -->
+  <div class="page-header">
+    <div class="page-header-text">
+      <div class="page-badge">
+        <span class="badge-dot"></span>
+        Admin Dashboard
+      </div>
+      <h1>Analytics Overview</h1>
+      <p>Real-time platform metrics across all volunteers and emergency requests</p>
+    </div>
+    <div class="page-header-time" id="liveTime">
+      <i class="fa-regular fa-clock"></i>
+      <span>--:--</span>
+    </div>
+  </div>
+
+  <!-- Stat Cards -->
+  <div class="stats-grid">
+
+    <div class="stat-card" id="card-total">
+      <div class="stat-icon total">
+        <i class="fa-solid fa-layer-group"></i>
+      </div>
+      <div class="stat-value" data-count="{{ metrics.total_requests }}">0</div>
+      <div class="stat-label">Total Requests</div>
+      <div class="stat-trend up">
+        <i class="fa-solid fa-arrow-trend-up"></i>
+        All time
+      </div>
+    </div>
+
+    <div class="stat-card" id="card-pending">
+      <div class="stat-icon pending">
+        <i class="fa-solid fa-clock-rotate-left"></i>
+      </div>
+      <div class="stat-value" data-count="{{ metrics.pending }}">0</div>
+      <div class="stat-label">Pending Requests</div>
+      <div class="stat-trend warning">
+        <i class="fa-solid fa-hourglass-half"></i>
+        Awaiting response
+      </div>
+    </div>
+
+    <div class="stat-card" id="card-accepted">
+      <div class="stat-icon accepted">
+        <i class="fa-solid fa-handshake"></i>
+      </div>
+      <div class="stat-value" data-count="{{ metrics.accepted }}">0</div>
+      <div class="stat-label">Accepted Requests</div>
+      <div class="stat-trend info">
+        <i class="fa-solid fa-spinner"></i>
+        In progress
+      </div>
+    </div>
+
+    <div class="stat-card" id="card-completed">
+      <div class="stat-icon completed">
+        <i class="fa-solid fa-circle-check"></i>
+      </div>
+      <div class="stat-value" data-count="{{ metrics.completed }}">0</div>
+      <div class="stat-label">Completed Requests</div>
+      <div class="stat-trend success">
+        <i class="fa-solid fa-check-double"></i>
+        Resolved
+      </div>
+    </div>
+
+    <div class="stat-card" id="card-volunteers">
+      <div class="stat-icon volunteers">
+        <i class="fa-solid fa-users"></i>
+      </div>
+      <div class="stat-value" data-count="{{ metrics.active_volunteers }}">0</div>
+      <div class="stat-label">Active Volunteers</div>
+      <div class="stat-trend up">
+        <i class="fa-solid fa-user-check"></i>
+        of {{ metrics.total_volunteers }} total
+      </div>
+    </div>
+
+    <div class="stat-card" id="card-response">
+      <div class="stat-icon response">
+        <i class="fa-solid fa-gauge-high"></i>
+      </div>
+      <div class="stat-value" data-count="{{ metrics.response_rate }}">0</div>
+      <div class="stat-suffix">%</div>
+      <div class="stat-label">Response Rate</div>
+      <div class="stat-trend {% if metrics.response_rate >= 70 %}success{% elif metrics.response_rate >= 40 %}warning{% else %}danger{% endif %}">
+        <i class="fa-solid fa-chart-line"></i>
+        {% if metrics.response_rate >= 70 %}Excellent
+        {% elif metrics.response_rate >= 40 %}Moderate
+        {% else %}Needs attention{% endif %}
+      </div>
+    </div>
+
+  </div>
+
+  <!-- Charts Row -->
+  <div class="charts-grid">
+
+    <div class="chart-card">
+      <div class="chart-header">
+        <div>
+          <div class="chart-title">Request Status</div>
+          <div class="chart-subtitle">Distribution by current status</div>
+        </div>
+        <div class="chart-icon status-icon">
+          <i class="fa-solid fa-chart-pie"></i>
+        </div>
+      </div>
+      <div class="chart-container">
+        <canvas id="statusChart"></canvas>
+      </div>
+    </div>
+
+    <div class="chart-card">
+      <div class="chart-header">
+        <div>
+          <div class="chart-title">Priority Levels</div>
+          <div class="chart-subtitle">Breakdown by urgency</div>
+        </div>
+        <div class="chart-icon priority-icon">
+          <i class="fa-solid fa-chart-bar"></i>
+        </div>
+      </div>
+      <div class="chart-container">
+        <canvas id="priorityChart"></canvas>
+      </div>
+    </div>
+
+    <div class="chart-card">
+      <div class="chart-header">
+        <div>
+          <div class="chart-title">Category Distribution</div>
+          <div class="chart-subtitle">Requests by emergency type</div>
+        </div>
+        <div class="chart-icon category-icon">
+          <i class="fa-solid fa-tags"></i>
+        </div>
+      </div>
+      <div class="chart-container">
+        <canvas id="categoryChart"></canvas>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- Recent Requests Table -->
+  <div class="table-section">
+    <div class="table-header">
+      <div>
+        <h2 class="table-title">Recent Requests</h2>
+        <p class="table-subtitle">Latest emergency requests across all categories</p>
+      </div>
+      <div class="table-count">
+        {{ recent_requests | length }} shown
+      </div>
+    </div>
+
+    <div class="table-card">
+      <div class="table-wrapper">
+        <table>
+          <thead>
+            <tr>
+              <th>Name</th>
+              <th>Category</th>
+              <th>Priority</th>
+              <th>Status</th>
+              <th>Location</th>
+              <th>Time</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for req in recent_requests %}
+            <tr>
+              <td>
+                <div class="cell-name">
+                  <div class="cell-avatar">{{ req.name[0] | upper }}</div>
+                  {{ req.name }}
+                </div>
+              </td>
+              <td>
+                <span class="cell-category">{{ req.category }}</span>
+              </td>
+              <td>
+                <span class="cell-priority {{ req.priority }}">
+                  <span class="priority-dot"></span>
+                  {{ req.priority }}
+                </span>
+              </td>
+              <td>
+                <span class="cell-status {{ req.status }}">{{ req.status }}</span>
+              </td>
+              <td class="cell-address">{{ req.address | truncate(40) if req.address else 'N/A' }}</td>
+              <td class="cell-time">{{ req.time }}</td>
+            </tr>
+            {% endfor %}
+
+            {% if recent_requests | length == 0 %}
+            <tr>
+              <td colspan="6" class="empty-cell">
+                <i class="fa-solid fa-inbox"></i>
+                No requests yet
+              </td>
+            </tr>
+            {% endif %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- Back Link -->
+  <div class="back-section">
+    <a href="/" class="back-link">
+      <i class="fa-solid fa-arrow-left"></i>
+      Back to Home
+    </a>
+  </div>
+
+</div>
+
+<!-- Scripts -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.4/dist/chart.umd.min.js"></script>
+
+<!-- Data -->
+<script id="statusData" type="application/json">{{ status_json | safe }}</script>
+<script id="priorityData" type="application/json">{{ priority_json | safe }}</script>
+<script id="categoryData" type="application/json">{{ category_json | safe }}</script>
+
+<script>
+
+// Parse embedded JSON data
+var statusCounts = JSON.parse(document.getElementById("statusData").textContent);
+var priorityCounts = JSON.parse(document.getElementById("priorityData").textContent);
+var categoryCounts = JSON.parse(document.getElementById("categoryData").textContent);
+
+// ===== Animated Counters =====
+function animateCounters() {
+  document.querySelectorAll('.stat-value[data-count]').forEach(counter => {
+    const target = parseFloat(counter.dataset.count) || 0;
+    const duration = 1400;
+    const startTime = performance.now();
+    const suffix = counter.nextElementSibling &&
+                   counter.nextElementSibling.classList.contains('stat-suffix')
+                   ? counter.nextElementSibling.textContent : '';
+
+    function update(currentTime) {
+      const elapsed = currentTime - startTime;
+      const progress = Math.min(elapsed / duration, 1);
+      const eased = 1 - Math.pow(1 - progress, 3);
+      const value = target * eased;
+
+      if (Number.isInteger(target)) {
+        counter.textContent = Math.floor(value);
+      } else {
+        counter.textContent = value.toFixed(1);
+      }
+
+      if (progress < 1) {
+        requestAnimationFrame(update);
+      } else {
+        if (Number.isInteger(target)) {
+          counter.textContent = target;
+        } else {
+          counter.textContent = target.toFixed(1);
+        }
+      }
+    }
+    requestAnimationFrame(update);
+  });
+}
+
+// ===== Live Clock =====
+function updateClock() {
+  const el = document.querySelector('#liveTime span');
+  if (el) {
+    el.textContent = new Date().toLocaleTimeString('en-US', {
+      hour: '2-digit', minute: '2-digit', hour12: true
+    });
+  }
+}
+
+// ===== Chart Theme Config =====
+const chartFont = { family: 'Outfit' };
+const chartTooltip = {
+  backgroundColor: '#1e293b',
+  titleColor: '#f1f5f9',
+  bodyColor: '#94a3b8',
+  borderColor: 'rgba(255,255,255,0.08)',
+  borderWidth: 1,
+  cornerRadius: 12,
+  padding: 14,
+  titleFont: { ...chartFont, weight: 600 },
+  bodyFont: chartFont
+};
+
+// ===== Status Doughnut Chart =====
+function initStatusChart() {
+  const ctx = document.getElementById('statusChart');
+  if (!ctx) return;
+
+  const p = statusCounts.Pending || 0;
+  const a = statusCounts.Accepted || 0;
+  const c = statusCounts.Completed || 0;
+  const total = p + a + c;
+
+  new Chart(ctx, {
+    type: 'doughnut',
+    data: {
+      labels: ['Pending', 'Accepted', 'Completed'],
+      datasets: [{
+        data: total > 0 ? [p, a, c] : [1],
+        backgroundColor: total > 0
+          ? ['#f59e0b', '#3b82f6', '#22c55e']
+          : ['rgba(255,255,255,0.06)'],
+        borderColor: total > 0
+          ? ['rgba(245,158,11,0.3)', 'rgba(59,130,246,0.3)', 'rgba(34,197,94,0.3)']
+          : ['rgba(255,255,255,0.08)'],
+        borderWidth: 2,
+        hoverOffset: 8,
+        spacing: 4,
+        borderRadius: 6
+      }]
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      cutout: '68%',
+      plugins: {
+        legend: {
+          position: 'bottom',
+          labels: {
+            color: '#94a3b8',
+            font: { ...chartFont, size: 13, weight: 500 },
+            padding: 20,
+            usePointStyle: true,
+            pointStyleWidth: 10
+          }
+        },
+        tooltip: chartTooltip
+      },
+      animation: { animateRotate: true, duration: 1200, easing: 'easeOutQuart' }
+    }
+  });
+}
+
+// ===== Priority Bar Chart =====
+function initPriorityChart() {
+  const ctx = document.getElementById('priorityChart');
+  if (!ctx) return;
+
+  new Chart(ctx, {
+    type: 'bar',
+    data: {
+      labels: ['High', 'Medium', 'Low'],
+      datasets: [{
+        label: 'Requests',
+        data: [
+          priorityCounts.High || 0,
+          priorityCounts.Medium || 0,
+          priorityCounts.Low || 0
+        ],
+        backgroundColor: [
+          'rgba(239, 68, 68, 0.7)',
+          'rgba(245, 158, 11, 0.7)',
+          'rgba(34, 197, 94, 0.7)'
+        ],
+        borderColor: ['#ef4444', '#f59e0b', '#22c55e'],
+        borderWidth: 2,
+        borderRadius: 10,
+        borderSkipped: false,
+        barThickness: 48
+      }]
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      scales: {
+        y: {
+          beginAtZero: true,
+          ticks: { color: '#64748b', font: { ...chartFont, size: 12 }, stepSize: 1 },
+          grid: { color: 'rgba(255,255,255,0.04)', drawBorder: false },
+          border: { display: false }
+        },
+        x: {
+          ticks: { color: '#94a3b8', font: { ...chartFont, size: 13, weight: 500 } },
+          grid: { display: false },
+          border: { display: false }
+        }
+      },
+      plugins: {
+        legend: { display: false },
+        tooltip: chartTooltip
+      },
+      animation: { duration: 1000, easing: 'easeOutQuart' }
+    }
+  });
+}
+
+// ===== Category Polar Area Chart =====
+function initCategoryChart() {
+  const ctx = document.getElementById('categoryChart');
+  if (!ctx) return;
+
+  const labels = Object.keys(categoryCounts);
+  const data = Object.values(categoryCounts);
+
+  const colors = [
+    'rgba(147, 51, 234, 0.7)',
+    'rgba(20, 184, 166, 0.7)',
+    'rgba(239, 68, 68, 0.7)',
+    'rgba(249, 115, 22, 0.7)',
+    'rgba(59, 130, 246, 0.7)',
+    'rgba(34, 197, 94, 0.7)',
+    'rgba(245, 158, 11, 0.7)'
+  ];
+  const borderColors = [
+    '#9333ea', '#14b8a6', '#ef4444', '#f97316',
+    '#3b82f6', '#22c55e', '#f59e0b'
+  ];
+
+  new Chart(ctx, {
+    type: 'polarArea',
+    data: {
+      labels: labels.length > 0 ? labels : ['No data'],
+      datasets: [{
+        data: data.length > 0 ? data : [1],
+        backgroundColor: data.length > 0 ? colors.slice(0, data.length) : ['rgba(255,255,255,0.06)'],
+        borderColor: data.length > 0 ? borderColors.slice(0, data.length) : ['rgba(255,255,255,0.08)'],
+        borderWidth: 2
+      }]
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      scales: {
+        r: {
+          ticks: { display: false },
+          grid: { color: 'rgba(255,255,255,0.05)' }
+        }
+      },
+      plugins: {
+        legend: {
+          position: 'bottom',
+          labels: {
+            color: '#94a3b8',
+            font: { ...chartFont, size: 12, weight: 500 },
+            padding: 16,
+            usePointStyle: true,
+            pointStyleWidth: 10
+          }
+        },
+        tooltip: chartTooltip
+      },
+      animation: { duration: 1200, easing: 'easeOutQuart' }
+    }
+  });
+}
+
+// ===== Init =====
+window.addEventListener('load', function() {
+  animateCounters();
+  updateClock();
+  setInterval(updateClock, 1000);
+  initStatusChart();
+  initPriorityChart();
+  initCategoryChart();
+});
+
+</script>
+
+</body>
+</html>

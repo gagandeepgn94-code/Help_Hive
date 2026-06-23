@@ -269,6 +269,37 @@
 
           </div>
 
+          {% if req.ai_priority %}
+          <div class="ai-insights">
+            <div class="ai-insights-header">
+              <i class="fa-solid fa-brain"></i>
+              AI Assessment
+            </div>
+            <div class="ai-insights-grid">
+              <div class="ai-tag ai-priority-{{ req.ai_priority | lower }}">
+                <span class="ai-label">AI Priority</span>
+                <span class="ai-value">{{ req.ai_priority }}</span>
+              </div>
+              <div class="ai-tag">
+                <span class="ai-label">Severity</span>
+                <span class="ai-value">{{ req.ai_severity_score }}/10</span>
+              </div>
+              <div class="ai-tag">
+                <span class="ai-label">Confidence</span>
+                <span class="ai-value">{{ (req.ai_confidence | float * 100) | round(0) }}%</span>
+              </div>
+              <div class="ai-tag">
+                <span class="ai-label">Radius</span>
+                <span class="ai-value">{{ req.ai_recommended_radius }} KM</span>
+              </div>
+            </div>
+            <div class="ai-reason">
+              <i class="fa-solid fa-quote-left"></i>
+              {{ req.ai_reason }}
+            </div>
+          </div>
+          {% endif %}
+
           <div class="card-actions">
             <a href="/accept/{{ req.request_id }}" class="btn-accept">
               <i class="fa-solid fa-check"></i> Accept
