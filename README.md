@@ -345,7 +345,7 @@ For every emergency request, the AI returns:
 
 | Name | Role |
 |---|---|
-| **Gagandeep** | Full-Stack Developer |
+| **Gagandeep G N** | Full-Stack Developer |
 | **Sachin Goudar** | UI/UX Engineer |
 | **Kiran Kumar K S** | Frontend Developer |
 
