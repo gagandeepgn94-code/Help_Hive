@@ -421,8 +421,7 @@ body {
   backdrop-filter: blur(20px);
   border-radius: var(--radius-lg);
   padding: 28px;
-  animation: fadeInUp 0.6s ease forwards;
-  opacity: 0;
+  animation: fadeInUp 0.6s ease both;
   animation-delay: 0.25s;
 }
 .chart-card:nth-child(2) {
@@ -458,8 +457,7 @@ body {
 /* ===== Map Section ===== */
 .map-section {
   margin-bottom: 32px;
-  animation: fadeInUp 0.6s ease forwards;
-  opacity: 0;
+  animation: fadeInUp 0.6s ease both;
   animation-delay: 0.35s;
 }
 .map-card {
@@ -502,16 +500,16 @@ body {
   animation: pulse-dot 2s infinite;
 }
 #map {
-  height: 400px;
+  height: 450px;
   width: 100%;
   border-radius: var(--radius-md);
   border: 1px solid var(--glass-border);
+  background: #0f172a;
 }
 
 /* ===== Requests Section ===== */
 .requests-section {
-  animation: fadeInUp 0.6s ease forwards;
-  opacity: 0;
+  animation: fadeInUp 0.6s ease both;
   animation-delay: 0.4s;
 }
 .section-header {

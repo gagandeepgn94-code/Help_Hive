@@ -284,14 +284,35 @@ def send_sms(phone_number, category, priority, address):
     """Send an SMS notification via AWS SNS to a volunteer.
     
     Args:
-        phone_number: Volunteer's phone number (E.164 format)
+        phone_number: Volunteer's phone number (any common Indian format)
         category: Emergency category (e.g. 'Doctor', 'Fire Rescue')
         priority: Priority level ('High', 'Medium', 'Low')
         address: Location/address of the emergency
     """
 
+    # ---- Normalize phone number to E.164 (+91XXXXXXXXXX) ----
+    raw = phone_number.strip().replace(' ', '').replace('-', '')
+
+    if raw.startswith('+'):
+        # Already in E.164 (e.g. +919876543210) — use as-is
+        e164 = raw
+    elif raw.startswith('91') and len(raw) == 12:
+        # Country code without plus (e.g. 919876543210)
+        e164 = '+' + raw
+    elif raw.startswith('0') and len(raw) == 11:
+        # Local format with leading 0 (e.g. 09876543210)
+        e164 = '+91' + raw[1:]
+    elif len(raw) == 10 and raw.isdigit():
+        # 10-digit Indian mobile number (e.g. 9876543210)
+        e164 = '+91' + raw
+    else:
+        print(f"[SNS] Invalid phone format '{phone_number}' — cannot normalize to E.164, skipping SMS")
+        return False
+
+    print(f"[SNS] Sending SMS to {e164} (original: '{phone_number}') | {category} | {priority}")
+
     message = (
-        f"🚨 HelpHive Emergency Alert\n\n"
+        f"HelpHive Emergency Alert\n\n"
         f"Category: {category}\n"
         f"Priority: {priority}\n"
         f"Location: {address}\n\n"
@@ -300,8 +321,8 @@ def send_sms(phone_number, category, priority, address):
     )
 
     try:
-        sns_client.publish(
-            PhoneNumber=phone_number,
+        response = sns_client.publish(
+            PhoneNumber=e164,
             Message=message,
             MessageAttributes={
                 'AWS.SNS.SMS.SMSType': {
@@ -310,10 +331,10 @@ def send_sms(phone_number, category, priority, address):
                 }
             }
         )
-        print(f"[SNS] SMS sent to {phone_number}")
+        print(f"[SNS] SUCCESS SMS delivered to {e164} - MessageId: {response.get('MessageId')}")
         return True
     except Exception as e:
-        print(f"[SNS] SMS failed for {phone_number}: {e}")
+        print(f"[SNS] FAILED SMS failed for {e164}: {type(e).__name__}: {e}")
         return False
 
 
@@ -324,7 +345,7 @@ def notify_volunteer(volunteer, request_data):
     name = volunteer.get('name', 'Unknown')
 
     if not phone:
-        print(f"[SNS] Could not notify {name} — no phone number")
+        print(f"[SNS] Could not notify {name} - no phone number")
         return False
 
     return send_sms(
@@ -371,7 +392,7 @@ def notify_nearby_volunteers(request_data, ai_radius=None):
                 if notify_volunteer(volunteer, request_data):
                     notified_count += 1
 
-        print(f"[SNS] AI radius={ai_radius} KM — notified {notified_count} volunteers for {category}")
+        print(f"[SNS] AI radius={ai_radius} KM - notified {notified_count} volunteers for {category}")
         return notified_count
 
     # Fallback: adaptive expansion by priority tiers
@@ -391,11 +412,11 @@ def notify_nearby_volunteers(request_data, ai_radius=None):
                 notified_count += 1
 
         if notified_count > 0:
-            print(f"[SNS] Found {notified_count} volunteers within {radius} KM — stopping expansion")
+            print(f"[SNS] Found {notified_count} volunteers within {radius} KM - stopping expansion")
             break
 
         previous_radius = radius
-        print(f"[SNS] No volunteers within {radius} KM for {category} — expanding radius")
+        print(f"[SNS] No volunteers within {radius} KM for {category} - expanding radius")
 
     if notified_count == 0:
         print(f"[SNS] No volunteers found for {category} request at any radius")
@@ -487,7 +508,7 @@ def request_help():
         )
 
         ai_latency = round(time.time() - ai_start, 2)
-        print(f"[AI] Prediction completed in {ai_latency}s — {ai_result.get('priority')}, confidence={ai_result.get('confidence')}")
+        print(f"[AI] Prediction completed in {ai_latency}s - {ai_result.get('priority')}, confidence={ai_result.get('confidence')}")
 
     except Exception as e:
         ai_latency = round(time.time() - ai_start, 2)
@@ -528,7 +549,7 @@ def request_help():
 
     try:
         if notify_now:
-            print(f"[AI] notify_immediately=True — sending SMS immediately")
+            print(f"[AI] notify_immediately=True - sending SMS immediately")
             notify_nearby_volunteers(request_data, ai_radius=ai_radius)
         else:
             notify_nearby_volunteers(request_data, ai_radius=ai_radius)
@@ -695,12 +716,23 @@ def volunteer():
     volunteer_lat = current_volunteer.get('latitude', '')
     volunteer_lon = current_volunteer.get('longitude', '')
 
+    # Convert to float for safe JSON rendering in the template
+    # DynamoDB may return Decimal type, or the value may be an empty string
+    try:
+        volunteer_lat = float(volunteer_lat) if volunteer_lat not in ('', None) else 0
+    except (ValueError, TypeError):
+        volunteer_lat = 0
+    try:
+        volunteer_lon = float(volunteer_lon) if volunteer_lon not in ('', None) else 0
+    except (ValueError, TypeError):
+        volunteer_lon = 0
+
     return render_template(
         'volunteer.html',
         requests=filtered_requests,
         notification_count=notification_count,
-        volunteer_lat=volunteer_lat or 0,
-        volunteer_lon=volunteer_lon or 0,
+        volunteer_lat=volunteer_lat,
+        volunteer_lon=volunteer_lon,
         current_volunteer=current_volunteer,
         status_json=json.dumps(status_counts),
         priority_json=json.dumps(priority_counts),

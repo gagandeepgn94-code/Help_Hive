@@ -3,365 +3,382 @@
 
 <head>
 
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta name="description" content="HelpHive Volunteer Analytics Dashboard - Monitor and respond to emergency requests in real-time.">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description"
+    content="HelpHive Volunteer Analytics Dashboard - Monitor and respond to emergency requests in real-time.">
 
-<title>Dashboard — HelpHive</title>
+  <title>Dashboard — HelpHive</title>
 
-<link rel="stylesheet"
-  href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 
-<link rel="stylesheet"
-  href="https://unpkg.com/leaflet/dist/leaflet.css"/>
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
 
-<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap"
-  rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 
-<link rel="stylesheet"
-  href="{{ url_for('static', filename='css/volunteer.css') }}">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/volunteer.css') }}">
 
 </head>
 
 <body>
 
-<!-- Background Orbs -->
-<div class="orb orb1"></div>
-<div class="orb orb2"></div>
-<div class="orb orb3"></div>
+  <!-- Background Orbs -->
+  <div class="orb orb1"></div>
+  <div class="orb orb2"></div>
+  <div class="orb orb3"></div>
 
-<!-- Mobile Sidebar Toggle -->
-<button class="sidebar-toggle" id="sidebarToggle" aria-label="Toggle sidebar">
-  <i class="fa-solid fa-bars"></i>
-</button>
+  <!-- Mobile Sidebar Toggle -->
+  <button class="sidebar-toggle" id="sidebarToggle" aria-label="Toggle sidebar">
+    <i class="fa-solid fa-bars"></i>
+  </button>
 
-<!-- Sidebar Overlay (mobile) -->
-<div class="sidebar-overlay" id="sidebarOverlay"></div>
+  <!-- Sidebar Overlay (mobile) -->
+  <div class="sidebar-overlay" id="sidebarOverlay"></div>
 
-<div class="dashboard-layout">
+  <div class="dashboard-layout">
 
-  <!-- ===== Sidebar ===== -->
-  <aside class="sidebar" id="sidebar">
+    <!-- ===== Sidebar ===== -->
+    <aside class="sidebar" id="sidebar">
 
-    <div class="sidebar-logo">
-      Help<span>Hive</span>
-    </div>
-
-    <div class="sidebar-profile">
-      <div class="sidebar-avatar">
-        {{ session['volunteer'][0] | upper }}
-      </div>
-      <div class="sidebar-name">{{ session['volunteer'] }}</div>
-      <div class="sidebar-role">
-        <span class="role-dot"></span>
-        {{ current_volunteer.category }}
-      </div>
-    </div>
-
-    <nav class="sidebar-nav">
-
-      <a href="#" class="nav-item active" id="nav-dashboard">
-        <i class="fa-solid fa-chart-pie"></i>
-        Dashboard
-      </a>
-
-      <a href="#requests-section" class="nav-item" id="nav-requests">
-        <i class="fa-solid fa-bell-concierge"></i>
-        Requests
-        {% if notification_count > 0 %}
-        <span class="nav-badge">{{ notification_count }}</span>
-        {% endif %}
-      </a>
-
-      <a href="#map-section" class="nav-item" id="nav-map">
-        <i class="fa-solid fa-map-location-dot"></i>
-        Live Map
-      </a>
-
-      <a href="#charts-section" class="nav-item" id="nav-analytics">
-        <i class="fa-solid fa-chart-bar"></i>
-        Analytics
-      </a>
-
-    </nav>
-
-    <a href="/logout" class="sidebar-logout">
-      <i class="fa-solid fa-right-from-bracket"></i>
-      Logout
-    </a>
-
-  </aside>
-
-  <!-- ===== Main Content ===== -->
-  <main class="main-content">
-
-    <!-- Top Bar -->
-    <div class="top-bar">
-
-      <div class="top-greeting">
-        <h1>Welcome back, {{ session['volunteer'] }} 👋</h1>
-        <p>Here's your emergency response overview</p>
+      <div class="sidebar-logo">
+        Help<span>Hive</span>
       </div>
 
-      <div class="top-actions">
-
-        <div class="time-display" id="liveTime">
-          <i class="fa-regular fa-clock"></i>
-          <span>--:--</span>
+      <div class="sidebar-profile">
+        <div class="sidebar-avatar">
+          {{ session['volunteer'][0] | upper }}
         </div>
+        <div class="sidebar-name">{{ session['volunteer'] }}</div>
+        <div class="sidebar-role">
+          <span class="role-dot"></span>
+          {{ current_volunteer.category }}
+        </div>
+      </div>
 
-        <div class="notification-btn">
-          <i class="fa-solid fa-bell"></i>
+      <nav class="sidebar-nav">
+
+        <a href="#" class="nav-item active" id="nav-dashboard">
+          <i class="fa-solid fa-chart-pie"></i>
+          Dashboard
+        </a>
+
+        <a href="#requests-section" class="nav-item" id="nav-requests">
+          <i class="fa-solid fa-bell-concierge"></i>
+          Requests
           {% if notification_count > 0 %}
-          <span class="notification-badge">{{ notification_count }}</span>
+          <span class="nav-badge">{{ notification_count }}</span>
           {% endif %}
+        </a>
+
+        <a href="#map-section" class="nav-item" id="nav-map">
+          <i class="fa-solid fa-map-location-dot"></i>
+          Live Map
+        </a>
+
+        <a href="#charts-section" class="nav-item" id="nav-analytics">
+          <i class="fa-solid fa-chart-bar"></i>
+          Analytics
+        </a>
+
+      </nav>
+
+      <a href="/logout" class="sidebar-logout">
+        <i class="fa-solid fa-right-from-bracket"></i>
+        Logout
+      </a>
+
+    </aside>
+
+    <!-- ===== Main Content ===== -->
+    <main class="main-content">
+
+      <!-- Top Bar -->
+      <div class="top-bar">
+
+        <div class="top-greeting">
+          <h1>Welcome back, {{ session['volunteer'] }} 👋</h1>
+          <p>Here's your emergency response overview</p>
+        </div>
+
+        <div class="top-actions">
+
+          <div class="time-display" id="liveTime">
+            <i class="fa-regular fa-clock"></i>
+            <span>--:--</span>
+          </div>
+
+          <div class="notification-btn">
+            <i class="fa-solid fa-bell"></i>
+            {% if notification_count > 0 %}
+            <span class="notification-badge">{{ notification_count }}</span>
+            {% endif %}
+          </div>
+
         </div>
 
       </div>
 
-    </div>
+      <!-- Stat Cards -->
+      <div class="stats-grid">
 
-    <!-- Stat Cards -->
-    <div class="stats-grid">
-
-      <div class="stat-card">
-        <div class="stat-icon alerts">
-          <i class="fa-solid fa-triangle-exclamation"></i>
+        <div class="stat-card">
+          <div class="stat-icon alerts">
+            <i class="fa-solid fa-triangle-exclamation"></i>
+          </div>
+          <div class="stat-value" data-count="{{ notification_count }}">0</div>
+          <div class="stat-label">Active Alerts</div>
         </div>
-        <div class="stat-value" data-count="{{ notification_count }}">0</div>
-        <div class="stat-label">Active Alerts</div>
+
+        <div class="stat-card">
+          <div class="stat-icon accepted">
+            <i class="fa-solid fa-handshake"></i>
+          </div>
+          <div class="stat-value"
+            data-count="{{ requests | selectattr('status','equalto','Accepted') | list | length }}">0</div>
+          <div class="stat-label">Accepted</div>
+        </div>
+
+        <div class="stat-card">
+          <div class="stat-icon completed">
+            <i class="fa-solid fa-circle-check"></i>
+          </div>
+          <div class="stat-value"
+            data-count="{{ requests | selectattr('status','equalto','Completed') | list | length }}">0</div>
+          <div class="stat-label">Completed</div>
+        </div>
+
+        <div class="stat-card">
+          <div class="stat-icon total">
+            <i class="fa-solid fa-layer-group"></i>
+          </div>
+          <div class="stat-value" data-count="{{ requests | length }}">0</div>
+          <div class="stat-label">Total Requests</div>
+        </div>
+
       </div>
 
-      <div class="stat-card">
-        <div class="stat-icon accepted">
-          <i class="fa-solid fa-handshake"></i>
-        </div>
-        <div class="stat-value" data-count="{{ requests | selectattr('status','equalto','Accepted') | list | length }}">0</div>
-        <div class="stat-label">Accepted</div>
-      </div>
+      <!-- Charts -->
+      <div class="charts-grid" id="charts-section">
 
-      <div class="stat-card">
-        <div class="stat-icon completed">
-          <i class="fa-solid fa-circle-check"></i>
-        </div>
-        <div class="stat-value" data-count="{{ requests | selectattr('status','equalto','Completed') | list | length }}">0</div>
-        <div class="stat-label">Completed</div>
-      </div>
-
-      <div class="stat-card">
-        <div class="stat-icon total">
-          <i class="fa-solid fa-layer-group"></i>
-        </div>
-        <div class="stat-value" data-count="{{ requests | length }}">0</div>
-        <div class="stat-label">Total Requests</div>
-      </div>
-
-    </div>
-
-    <!-- Charts -->
-    <div class="charts-grid" id="charts-section">
-
-      <div class="chart-card">
-        <div class="chart-header">
-          <div>
-            <div class="chart-title">Request Status</div>
-            <div class="chart-subtitle">Distribution by current status</div>
+        <div class="chart-card">
+          <div class="chart-header">
+            <div>
+              <div class="chart-title">Request Status</div>
+              <div class="chart-subtitle">Distribution by current status</div>
+            </div>
+          </div>
+          <div class="chart-container">
+            <canvas id="statusChart"></canvas>
           </div>
         </div>
-        <div class="chart-container">
-          <canvas id="statusChart"></canvas>
-        </div>
-      </div>
 
-      <div class="chart-card">
-        <div class="chart-header">
-          <div>
-            <div class="chart-title">Priority Levels</div>
-            <div class="chart-subtitle">Breakdown by urgency</div>
+        <div class="chart-card">
+          <div class="chart-header">
+            <div>
+              <div class="chart-title">Priority Levels</div>
+              <div class="chart-subtitle">Breakdown by urgency</div>
+            </div>
           </div>
-        </div>
-        <div class="chart-container">
-          <canvas id="priorityChart"></canvas>
-        </div>
-      </div>
-
-    </div>
-
-    <!-- Map -->
-    <div class="map-section" id="map-section">
-
-      <div class="map-card">
-
-        <div class="map-header">
-          <div class="map-title">
-            <i class="fa-solid fa-satellite-dish"></i>
-            Live Emergency Map
-          </div>
-          <div class="map-badge">
-            <span class="map-badge-dot"></span>
-            Live
+          <div class="chart-container">
+            <canvas id="priorityChart"></canvas>
           </div>
         </div>
 
-        <div id="map"></div>
+      </div>
+
+      <!-- Map -->
+      <div class="map-section" id="map-section">
+
+        <div class="map-card">
+
+          <div class="map-header">
+            <div class="map-title">
+              <i class="fa-solid fa-satellite-dish"></i>
+              Live Emergency Map
+            </div>
+            <div class="map-badge">
+              <span class="map-badge-dot"></span>
+              Live
+            </div>
+          </div>
+
+          <div id="map"></div>
+
+        </div>
 
       </div>
 
-    </div>
+      <!-- Emergency Requests -->
+      <div class="requests-section" id="requests-section">
 
-    <!-- Emergency Requests -->
-    <div class="requests-section" id="requests-section">
+        <div class="section-header">
+          <h2 class="section-title">Emergency Requests</h2>
+          <span class="request-count">{{ requests | length }} total</span>
+        </div>
 
-      <div class="section-header">
-        <h2 class="section-title">Emergency Requests</h2>
-        <span class="request-count">{{ requests | length }} total</span>
-      </div>
+        {% if requests | length > 0 %}
 
-      {% if requests | length > 0 %}
+        <div class="requests-grid">
 
-      <div class="requests-grid">
+          {% for req in requests %}
 
-        {% for req in requests %}
-
-        <div class="request-card
+          <div class="request-card
           {% if req.priority == 'High' %} high-priority
           {% elif req.priority == 'Medium' %} medium-priority
           {% else %} low-priority
           {% endif %}
         ">
 
-          <div class="card-top">
-            <div class="card-category">{{ req.category }}</div>
-            <div class="card-status {{ req.status }}">{{ req.status }}</div>
-          </div>
-
-          <div class="card-priority {{ req.priority }}">
-            <i class="fa-solid fa-bolt"></i>
-            {{ req.priority }} Priority
-          </div>
-
-          <div class="card-details">
-
-            <div class="card-detail">
-              <i class="fa-solid fa-user"></i>
-              {{ req.name }}
+            <div class="card-top">
+              <div class="card-category">{{ req.category }}</div>
+              <div class="card-status {{ req.status }}">{{ req.status }}</div>
             </div>
 
-            <div class="card-detail">
-              <i class="fa-solid fa-location-dot"></i>
-              {{ req.address }}
+            <div class="card-priority {{ req.priority }}">
+              <i class="fa-solid fa-bolt"></i>
+              {{ req.priority }} Priority
             </div>
 
-            <div class="card-detail">
-              <i class="fa-solid fa-route"></i>
-              {{ req.distance }} KM Away
-            </div>
+            <div class="card-details">
 
-            <div class="card-detail">
-              <i class="fa-solid fa-message"></i>
-              {{ req.help }}
-            </div>
-
-            <div class="card-detail">
-              <i class="fa-regular fa-clock"></i>
-              {{ req.time }}
-            </div>
-
-          </div>
-
-          {% if req.ai_priority %}
-          <div class="ai-insights">
-            <div class="ai-insights-header">
-              <i class="fa-solid fa-brain"></i>
-              AI Assessment
-            </div>
-            <div class="ai-insights-grid">
-              <div class="ai-tag ai-priority-{{ req.ai_priority | lower }}">
-                <span class="ai-label">AI Priority</span>
-                <span class="ai-value">{{ req.ai_priority }}</span>
+              <div class="card-detail">
+                <i class="fa-solid fa-user"></i>
+                {{ req.name }}
               </div>
-              <div class="ai-tag">
-                <span class="ai-label">Severity</span>
-                <span class="ai-value">{{ req.ai_severity_score }}/10</span>
-              </div>
-              <div class="ai-tag">
-                <span class="ai-label">Confidence</span>
-                <span class="ai-value">{{ (req.ai_confidence | float * 100) | round(0) }}%</span>
-              </div>
-              <div class="ai-tag">
-                <span class="ai-label">Radius</span>
-                <span class="ai-value">{{ req.ai_recommended_radius }} KM</span>
-              </div>
-            </div>
-            <div class="ai-reason">
-              <i class="fa-solid fa-quote-left"></i>
-              {{ req.ai_reason }}
-            </div>
-          </div>
-          {% endif %}
 
-          <div class="card-actions">
-            <a href="/accept/{{ req.request_id }}" class="btn-accept">
-              <i class="fa-solid fa-check"></i> Accept
-            </a>
-            <a href="/complete/{{ req.request_id }}" class="btn-complete">
-              <i class="fa-solid fa-flag-checkered"></i> Complete
-            </a>
-            <a href="/delete/{{ req.request_id }}" class="btn-delete">
-              <i class="fa-solid fa-trash"></i> Delete
-            </a>
+              <div class="card-detail">
+                <i class="fa-solid fa-location-dot"></i>
+                {{ req.address }}
+              </div>
+
+              <div class="card-detail">
+                <i class="fa-solid fa-route"></i>
+                {{ req.distance }} KM Away
+              </div>
+
+              <div class="card-detail">
+                <i class="fa-solid fa-message"></i>
+                {{ req.help }}
+              </div>
+
+              <div class="card-detail">
+                <i class="fa-regular fa-clock"></i>
+                {{ req.time }}
+              </div>
+
+            </div>
+
+            {% if req.ai_priority %}
+            <div class="ai-insights">
+              <div class="ai-insights-header">
+                <i class="fa-solid fa-brain"></i>
+                AI Assessment
+              </div>
+              <div class="ai-insights-grid">
+                <div class="ai-tag ai-priority-{{ req.ai_priority | lower }}">
+                  <span class="ai-label">AI Priority</span>
+                  <span class="ai-value">{{ req.ai_priority }}</span>
+                </div>
+                <div class="ai-tag">
+                  <span class="ai-label">Severity</span>
+                  <span class="ai-value">{{ req.ai_severity_score }}/10</span>
+                </div>
+                <div class="ai-tag">
+                  <span class="ai-label">Confidence</span>
+                  <span class="ai-value">{{ (req.ai_confidence | float * 100) | round(0) }}%</span>
+                </div>
+                <div class="ai-tag">
+                  <span class="ai-label">Radius</span>
+                  <span class="ai-value">{{ req.ai_recommended_radius }} KM</span>
+                </div>
+              </div>
+              <div class="ai-reason">
+                <i class="fa-solid fa-quote-left"></i>
+                {{ req.ai_reason }}
+              </div>
+            </div>
+            {% endif %}
+
+            <div class="card-actions">
+              <a href="/accept/{{ req.request_id }}" class="btn-accept">
+                <i class="fa-solid fa-check"></i> Accept
+              </a>
+              <a href="/complete/{{ req.request_id }}" class="btn-complete">
+                <i class="fa-solid fa-flag-checkered"></i> Complete
+              </a>
+              <a href="/delete/{{ req.request_id }}" class="btn-delete">
+                <i class="fa-solid fa-trash"></i> Delete
+              </a>
+            </div>
+
           </div>
+
+          {% endfor %}
 
         </div>
 
-        {% endfor %}
+        {% else %}
+
+        <div class="empty-state">
+          <i class="fa-solid fa-inbox"></i>
+          <p>No emergency requests nearby right now</p>
+        </div>
+
+        {% endif %}
 
       </div>
 
-      {% else %}
+    </main>
 
-      <div class="empty-state">
-        <i class="fa-solid fa-inbox"></i>
-        <p>No emergency requests nearby right now</p>
-      </div>
+  </div>
 
-      {% endif %}
-
-    </div>
-
-  </main>
-
-</div>
-
-<!-- Scripts -->
-<script src="https://cdn.socket.io/4.7.5/socket.io.min.js"></script>
-<script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+  <!-- Scripts -->
+<!-- Socket.IO: use local Flask-SocketIO client first, fallback to cdnjs CDN -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.7.5/socket.io.min.js"></script>
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.4/dist/chart.umd.min.js"></script>
 
-<!-- Data (parsed by JS, not executed as script) -->
-<script id="volunteerData" type="application/json">
+  <!-- Data (parsed by JS, not executed as script) -->
+  <script id="volunteerData" type="application/json">
 {
   "lat": {{ volunteer_lat }},
   "lon": {{ volunteer_lon }}
 }
 </script>
-<script id="requestData" type="application/json">{{ request_data_json | safe }}</script>
-<script id="statusData" type="application/json">{{ status_json | safe }}</script>
-<script id="priorityData" type="application/json">{{ priority_json | safe }}</script>
-<script id="categoryData" type="application/json">{{ category_json | safe }}</script>
+  <script id="requestData" type="application/json">{{ request_data_json | safe }}</script>
+  <script id="statusData" type="application/json">{{ status_json | safe }}</script>
+  <script id="priorityData" type="application/json">{{ priority_json | safe }}</script>
+  <script id="categoryData" type="application/json">{{ category_json | safe }}</script>
 
-<script>
-// Parse embedded JSON data
-var _vd = JSON.parse(document.getElementById("volunteerData").textContent);
-var volunteerLat = _vd.lat;
-var volunteerLon = _vd.lon;
-var requestData = JSON.parse(document.getElementById("requestData").textContent);
-var statusCounts = JSON.parse(document.getElementById("statusData").textContent);
-var priorityCounts = JSON.parse(document.getElementById("priorityData").textContent);
-var categoryCounts = JSON.parse(document.getElementById("categoryData").textContent);
-</script>
+  <script>
+    // Parse embedded JSON data safely — errors here must NOT crash the page
+    var volunteerLat = null, volunteerLon = null;
+    var requestData = [];
+    var statusCounts = { Pending: 0, Accepted: 0, Completed: 0 };
+    var priorityCounts = { High: 0, Medium: 0, Low: 0 };
+    var categoryCounts = {};
 
-<script src="{{ url_for('static', filename='js/volunteer.js') }}"></script>
+    try {
+      var _vd = JSON.parse(document.getElementById("volunteerData").textContent);
+      volunteerLat = _vd.lat;
+      volunteerLon = _vd.lon;
+    } catch (e) { console.warn('[HelpHive] Failed to parse volunteer data:', e); }
+
+    try { requestData = JSON.parse(document.getElementById("requestData").textContent); }
+    catch (e) { console.warn('[HelpHive] Failed to parse request data:', e); }
+
+    try { statusCounts = JSON.parse(document.getElementById("statusData").textContent); }
+    catch (e) { console.warn('[HelpHive] Failed to parse status data:', e); }
+
+    try { priorityCounts = JSON.parse(document.getElementById("priorityData").textContent); }
+    catch (e) { console.warn('[HelpHive] Failed to parse priority data:', e); }
+
+    try { categoryCounts = JSON.parse(document.getElementById("categoryData").textContent); }
+    catch (e) { console.warn('[HelpHive] Failed to parse category data:', e); }
+  </script>
+
+  <script src="{{ url_for('static', filename='js/volunteer.js') }}"></script>
 
 </body>
+
 </html>

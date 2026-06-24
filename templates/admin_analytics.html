@@ -272,10 +272,19 @@
 
 <script>
 
-// Parse embedded JSON data
-var statusCounts = JSON.parse(document.getElementById("statusData").textContent);
-var priorityCounts = JSON.parse(document.getElementById("priorityData").textContent);
-var categoryCounts = JSON.parse(document.getElementById("categoryData").textContent);
+// Parse embedded JSON data safely
+var statusCounts = { Pending: 0, Accepted: 0, Completed: 0 };
+var priorityCounts = { High: 0, Medium: 0, Low: 0 };
+var categoryCounts = {};
+
+try { statusCounts = JSON.parse(document.getElementById("statusData").textContent); }
+catch (e) { console.warn('[HelpHive] Failed to parse status data:', e); }
+
+try { priorityCounts = JSON.parse(document.getElementById("priorityData").textContent); }
+catch (e) { console.warn('[HelpHive] Failed to parse priority data:', e); }
+
+try { categoryCounts = JSON.parse(document.getElementById("categoryData").textContent); }
+catch (e) { console.warn('[HelpHive] Failed to parse category data:', e); }
 
 // ===== Animated Counters =====
 function animateCounters() {
@@ -315,11 +324,16 @@ function animateCounters() {
 
 // ===== Live Clock =====
 function updateClock() {
-  const el = document.querySelector('#liveTime span');
+  var el = document.querySelector('#liveTime span');
   if (el) {
-    el.textContent = new Date().toLocaleTimeString('en-US', {
-      hour: '2-digit', minute: '2-digit', hour12: true
+    var now = new Date();
+    var time = now.toLocaleTimeString('en-US', {
+      hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: true
     });
+    var date = now.toLocaleDateString('en-US', {
+      weekday: 'short', day: 'numeric', month: 'short', year: 'numeric'
+    });
+    el.textContent = date + '  •  ' + time;
   }
 }
 
@@ -502,12 +516,22 @@ function initCategoryChart() {
 
 // ===== Init =====
 window.addEventListener('load', function() {
-  animateCounters();
-  updateClock();
-  setInterval(updateClock, 1000);
-  initStatusChart();
-  initPriorityChart();
-  initCategoryChart();
+  // Start clock immediately
+  try {
+    updateClock();
+    setInterval(updateClock, 1000);
+  } catch (e) { console.error('[HelpHive] Clock init failed:', e); }
+
+  // Counters can run immediately
+  try { animateCounters(); } catch (e) { console.error('[HelpHive] Counter animation failed:', e); }
+
+  // Charts must wait for CSS fadeInUp animation to complete (delay 0.35s + duration 0.6s = ~950ms)
+  // otherwise Chart.js gets zero-height container and renders blank
+  setTimeout(function() {
+    try { initStatusChart(); } catch (e) { console.error('[HelpHive] Status chart failed:', e); }
+    try { initPriorityChart(); } catch (e) { console.error('[HelpHive] Priority chart failed:', e); }
+    try { initCategoryChart(); } catch (e) { console.error('[HelpHive] Category chart failed:', e); }
+  }, 1000);
 });
 
 </script>
